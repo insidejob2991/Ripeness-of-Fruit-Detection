@@ -85,6 +85,8 @@ python train_from_detections.py
 -- This script works with already detected fruits in the detected_fruits directory
 -- It's useful for fine-tuning the model with new data
 ```
+6.Pretrained Model Weights:
+Download pretrained model weights from the following link:https://drive.google.com/drive/folders/1poJ4br3aS-XzpowZMfeECoojbfLpH5MC?usp=drive_link
 
 ## Project Structure
 
