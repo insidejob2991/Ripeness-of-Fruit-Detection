@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+
+# Project specific
+users.json
+users.db
+*.h5
+detected_fruits/
+calibration_data/
+alerts/
+live_training_data/
+fruit_album/
+dataset/
+tempCodeRunnerFile.py
+
+# Logs and databases
+*.log
+*.sqlite
+*.db
+
+# Environment variables
+.env
+.env.*
+
+# Temporary files
+*.tmp
+*.temp
+.DS_Store 

@@ -1,0 +1,1977 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Fridge</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #2ecc71;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --text-color: #2c3e50;
+            --bg-color: #f0f2f5;
+            --card-bg: #ffffff;
+        }
+
+        body {
+            background-image: url('/static/background_image/pexels-francesco-ungaro-281260.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--text-color);
+            line-height: 1.6;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.6);
+            z-index: -1;
+        }
+
+        /* Navbar Styles */
+        .navbar {
+            background: rgb(0,127,255);
+            background: linear-gradient(159deg, rgba(0,127,255,1) 0%, rgba(42,82,190,1) 100%);
+            box-shadow: 0 2px 15px rgba(0,0,0,0.2);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #ffffff !important;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            background: linear-gradient(45deg, #fff, #e0e0e0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+        }
+
+        .navbar-brand:hover {
+            transform: translateY(-2px);
+            background: linear-gradient(45deg, #4fc3f7, #ffffff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.9) !important;
+            font-weight: 500;
+            padding: 0.5rem 1.2rem !important;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            margin: 0 0.3rem;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-link:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.2),
+                transparent
+            );
+            transition: 0.5s;
+        }
+
+        .nav-link:hover:before {
+            left: 100%;
+        }
+
+        .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #ffffff !important;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .nav-link.active {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+            color: #ffffff !important;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-link i {
+            margin-right: 5px;
+            transition: transform 0.3s ease;
+        }
+
+        .nav-link:hover i {
+            transform: scale(1.1);
+        }
+
+        .navbar-toggler {
+            border-color: rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .navbar-toggler-icon {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255, 255, 255, 0.9)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+        }
+
+        /* Main Container Styles */
+        .main-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+            animation: fadeIn 0.5s ease;
+        }
+
+        /* Title Section */
+        .title-section {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem 0;
+        }
+
+        .title-section h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: slideDown 0.5s ease;
+        }
+
+        .title-section p {
+            font-size: 1.3rem;
+            color: #666;
+            animation: fadeIn 0.5s ease 0.2s both;
+        }
+
+        /* Video Container */
+        .video-container {
+            background: var(--card-bg);
+            border-radius: 20px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            transition: transform 0.3s ease;
+            animation: slideUp 0.5s ease;
+        }
+
+        .video-container:hover {
+            transform: translateY(-5px);
+        }
+
+        .video-feed {
+            width: 100%;
+            border-radius: 15px;
+            background-color: #000;
+            min-height: 480px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        /* Controls */
+        .controls {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        .btn-control {
+            padding: 1rem 2.5rem;
+            font-size: 1.1rem;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            border: none;
+            color: white;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .btn-control:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+
+        .btn-start {
+            background: linear-gradient(45deg, #2ecc71, #27ae60);
+        }
+
+        .btn-analyze {
+            background: linear-gradient(45deg, #3498db, #2980b9);
+        }
+
+        .btn-stop {
+            background: linear-gradient(45deg, #e74c3c, #c0392b);
+        }
+
+        .btn-control:disabled {
+            opacity: 0.7;
+            transform: none;
+            cursor: not-allowed;
+        }
+
+        /* Recent Detection */
+        .recent-detection {
+            background: var(--card-bg);
+            border-radius: 20px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+            padding: 2rem;
+            animation: slideUp 0.5s ease 0.2s both;
+            margin-bottom: 2rem;
+        }
+
+        .recent-detection h2 {
+            color: var(--text-color);
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+            border-bottom: 3px solid var(--primary-color);
+            padding-bottom: 0.5rem;
+            display: inline-block;
+        }
+
+        .detection-item {
+            background: rgba(46, 204, 113, 0.1);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--primary-color);
+            transition: all 0.3s ease;
+        }
+
+        .detection-item:hover {
+            transform: translateX(5px);
+            background: rgba(46, 204, 113, 0.15);
+        }
+
+        /* Footer */
+        .footer {
+            background-color: var(--card-bg);
+            padding: 1.5rem 0;
+            margin-top: 3rem;
+            box-shadow: 0 -4px 15px rgba(0,0,0,0.1);
+        }
+
+        .footer p {
+            margin: 0;
+            text-align: center;
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideDown {
+            from { 
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideUp {
+            from { 
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .title-section h1 {
+                font-size: 2.5rem;
+            }
+            .controls {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            .btn-control {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        /* Inventory Section */
+        .inventory-section {
+            background: var(--card-bg);
+            border-radius: 20px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            animation: slideUp 0.5s ease 0.1s both;
+        }
+
+        .section-title {
+            color: var(--text-color);
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+            border-bottom: 3px solid var(--primary-color);
+            padding-bottom: 0.5rem;
+            display: inline-block;
+        }
+
+        .inventory-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .inventory-item {
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px 0;
+            background: white;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .inventory-item.at-risk {
+            border-left: 4px solid #ffc107;
+            background: #fff8e1;
+        }
+
+        .inventory-item.danger {
+            border-left: 4px solid #f44336;
+            background: #ffebee;
+        }
+
+        .status-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .status-badge.warning {
+            background: #ffc107;
+            color: #000;
+        }
+
+        .status-badge.danger {
+            background: #f44336;
+            color: white;
+        }
+
+        .item-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .recommended-conditions {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .condition-warning {
+            color: #d32f2f;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        .fruit-icon {
+            font-size: 2rem;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(46, 204, 113, 0.1);
+            border-radius: 12px;
+            color: var(--primary-color);
+        }
+
+        .fruit-details {
+            flex: 1;
+        }
+
+        .fruit-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 0.3rem;
+            color: var(--text-color);
+        }
+
+        .fruit-status {
+            font-size: 0.9rem;
+            color: #666;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .status-fresh {
+            background-color: rgba(46, 204, 113, 0.1);
+            color: #27ae60;
+        }
+
+        .status-ripe {
+            background-color: rgba(241, 196, 15, 0.1);
+            color: #f39c12;
+        }
+
+        .status-overripe {
+            background-color: rgba(231, 76, 60, 0.1);
+            color: #c0392b;
+        }
+
+        @media (max-width: 768px) {
+            .inventory-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .add-to-inventory {
+            background: linear-gradient(45deg, var(--primary-color), #27ae60);
+            border: none;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .add-to-inventory:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .remove-from-inventory {
+            background: linear-gradient(45deg, var(--accent-color), #c0392b);
+            border: none;
+            color: white;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            margin-left: 1rem;
+        }
+
+        .remove-from-inventory:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        /* Add these styles in the style section */
+        .inventory-controls {
+            margin-bottom: 1.5rem;
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .search-container {
+            flex: 1;
+            min-width: 250px;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.8rem 1rem 0.8rem 2.5rem;
+            border: 2px solid rgba(46, 204, 113, 0.2);
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background-color: var(--bg-color);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.8rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+        }
+
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .quantity-btn {
+            background: var(--bg-color);
+            border: none;
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            color: var(--text-color);
+            transition: all 0.2s ease;
+        }
+
+        .quantity-btn:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .quantity-display {
+            font-weight: 600;
+            min-width: 40px;
+            text-align: center;
+        }
+
+        .inventory-stats {
+            background: var(--bg-color);
+            padding: 0.8rem 1.2rem;
+            border-radius: 12px;
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .stat-value {
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .temp-recommendation {
+            background: var(--bg-color);
+            padding: 1rem;
+            border-radius: 12px;
+            margin-top: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .temp-recommendation i {
+            font-size: 1.5rem;
+        }
+
+        .temp-recommendation.increase {
+            background: rgba(231, 76, 60, 0.1);
+            color: #c0392b;
+        }
+
+        .temp-recommendation.decrease {
+            background: rgba(52, 152, 219, 0.1);
+            color: #2980b9;
+        }
+
+        .temp-recommendation.optimal {
+            background: rgba(46, 204, 113, 0.1);
+            color: #27ae60;
+        }
+
+        /* Update the ideal-temp style to remove warning-related styles */
+        .ideal-temp {
+            font-size: 0.9rem;
+            color: #666;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.3rem;
+            background: rgba(52, 152, 219, 0.1);
+            padding: 0.3rem 0.8rem;
+            border-radius: 8px;
+        }
+
+        .temp-icon {
+            color: var(--secondary-color);
+        }
+
+        /* Add these styles for the stats dashboard */
+        .stats-dashboard {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            animation: slideDown 0.5s ease;
+        }
+
+        .stat-box {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .stat-box:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+        }
+
+        .stat-box.total::before {
+            background: linear-gradient(45deg, #3498db, #2980b9);
+        }
+
+        .stat-box.good::before {
+            background: linear-gradient(45deg, #2ecc71, #27ae60);
+        }
+
+        .stat-box.expiring::before {
+            background: linear-gradient(45deg, #f1c40f, #f39c12);
+        }
+
+        .stat-box.spoiled::before {
+            background: linear-gradient(45deg, #e74c3c, #c0392b);
+        }
+
+        .stat-title {
+            color: #666;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-box.total .stat-value {
+            color: #3498db;
+        }
+
+        .stat-box.good .stat-value {
+            color: #2ecc71;
+        }
+
+        .stat-box.expiring .stat-value {
+            color: #f39c12;
+        }
+
+        .stat-box.spoiled .stat-value {
+            color: #e74c3c;
+        }
+
+        .stat-icon {
+            position: absolute;
+            right: 1.5rem;
+            bottom: 1.5rem;
+            font-size: 2.5rem;
+            opacity: 0.1;
+        }
+
+        @media (max-width: 992px) {
+            .stats-dashboard {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 576px) {
+            .stats-dashboard {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Quick Add Items Section Styles */
+        .quick-add-section {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .category-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+        }
+
+        .category-tab {
+            padding: 0.8rem 1.5rem;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            border: none;
+            background: var(--bg-color);
+            color: var(--text-color);
+        }
+
+        .category-tab.active {
+            background: #3498db;
+            color: white;
+        }
+
+        .category-tab:hover:not(.active) {
+            background: rgba(52, 152, 219, 0.1);
+        }
+
+        .items-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .item-card {
+            background: var(--bg-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .item-card:hover {
+            transform: translateY(-5px);
+            border-color: #3498db;
+        }
+
+        .item-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .item-name {
+            font-weight: 500;
+            color: var(--text-color);
+        }
+
+        .add-new-btn {
+            background: var(--bg-color);
+            border: 2px dashed #ccc;
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .add-new-btn:hover {
+            border-color: #3498db;
+            color: #3498db;
+        }
+
+        .add-new-btn i {
+            font-size: 2rem;
+        }
+
+        .expiry-warning {
+            color: #f39c12;
+            font-weight: 500;
+            margin-left: 1rem;
+            padding: 0.2rem 0.5rem;
+            background: rgba(241, 196, 15, 0.1);
+            border-radius: 4px;
+        }
+        
+        .inventory-item.aboutToSpoil {
+            border-left-color: #f39c12;
+            background: rgba(241, 196, 15, 0.05);
+        }
+        
+        .inventory-item.aboutToSpoil:hover {
+            background: rgba(241, 196, 15, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="/">🧊 Smart Fridge</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/"><i class="fas fa-home"></i> Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/fridge_conditions"><i class="fas fa-thermometer-half"></i> Fridge Conditions</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/recipes"><i class="fas fa-utensils"></i> Recipes</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        <div class="title-section">
+            <h1>Smart Fridge</h1>
+            <p>Intelligent monitoring and management of your refrigerated items</p>
+        </div>
+
+        <div class="stats-dashboard">
+            <div class="stat-box total">
+                <div class="stat-title">Total Items</div>
+                <div class="stat-value" id="dashboardTotal">0</div>
+                <i class="fas fa-box stat-icon"></i>
+            </div>
+            <div class="stat-box good">
+                <div class="stat-title">Good Condition</div>
+                <div class="stat-value" id="dashboardGood">0</div>
+                <i class="fas fa-check-circle stat-icon"></i>
+            </div>
+            <div class="stat-box expiring">
+                <div class="stat-title">Expiring Soon</div>
+                <div class="stat-value" id="dashboardExpiring">0</div>
+                <i class="fas fa-exclamation-circle stat-icon"></i>
+            </div>
+            <div class="stat-box spoiled">
+                <div class="stat-title">Spoiled Items</div>
+                <div class="stat-value" id="dashboardSpoiled">0</div>
+                <i class="fas fa-times-circle stat-icon"></i>
+            </div>
+        </div>
+
+        <div class="quick-add-section">
+            <h2 class="section-title">Quick Add Items</h2>
+            <div class="category-tabs">
+                <button class="category-tab active" onclick="showCategory('fruits')">
+                    <i class="fas fa-apple-alt"></i> Fruits
+                </button>
+                <button class="category-tab" onclick="showCategory('dairy')">
+                    <i class="fas fa-cheese"></i> Dairy
+                </button>
+                <button class="category-tab" onclick="showCategory('beverages')">
+                    <i class="fas fa-wine-bottle"></i> Beverages
+                </button>
+                <button class="category-tab" onclick="showCategory('medicine')">
+                    <i class="fas fa-pills"></i> Medicine
+                </button>
+                <button class="category-tab" onclick="showCategory('others')">
+                    <i class="fas fa-box"></i> Others
+                </button>
+            </div>
+
+            <div id="fruitsGrid" class="items-grid">
+                <div class="item-card" onclick="quickAddItem('Apple')">
+                    <div class="item-icon">🍎</div>
+                    <div class="item-name">Apple</div>
+                </div>
+                <div class="item-card" onclick="quickAddItem('Banana')">
+                    <div class="item-icon">🍌</div>
+                    <div class="item-name">Banana</div>
+                </div>
+                <div class="item-card" onclick="quickAddItem('Orange')">
+                    <div class="item-icon">🍊</div>
+                    <div class="item-name">Orange</div>
+                </div>
+                <div class="add-new-btn" onclick="showAddNewItemModal('fruits')">
+                    <i class="fas fa-plus"></i>
+                    <span>Add New Item</span>
+                </div>
+            </div>
+
+            <div id="dairyGrid" class="items-grid" style="display: none;">
+                <div class="item-card" onclick="quickAddItem('Cheese')">
+                    <div class="item-icon">🧀</div>
+                    <div class="item-name">Cheese</div>
+                </div>
+                <div class="item-card" onclick="quickAddItem('Milk')">
+                    <div class="item-icon">🥛</div>
+                    <div class="item-name">Milk</div>
+                </div>
+                <div class="item-card" onclick="quickAddItem('Butter')">
+                    <div class="item-icon">🧈</div>
+                    <div class="item-name">Butter</div>
+                </div>
+                <div class="add-new-btn" onclick="showAddNewItemModal('dairy')">
+                    <i class="fas fa-plus"></i>
+                    <span>Add New Item</span>
+                </div>
+            </div>
+
+            <div id="beveragesGrid" class="items-grid" style="display: none;">
+                <div class="item-card" onclick="quickAddItem('Soft Drink')">
+                    <div class="item-icon">🥤</div>
+                    <div class="item-name">Soft Drink</div>
+                </div>
+                <div class="item-card" onclick="quickAddItem('Orange Juice')">
+                    <div class="item-icon">🧃</div>
+                    <div class="item-name">Orange Juice</div>
+                </div>
+                <div class="item-card" onclick="quickAddItem('Apple Juice')">
+                    <div class="item-icon">🧃</div>
+                    <div class="item-name">Apple Juice</div>
+                </div>
+                <div class="add-new-btn" onclick="showAddNewItemModal('beverages')">
+                    <i class="fas fa-plus"></i>
+                    <span>Add New Item</span>
+                </div>
+            </div>
+
+            <div id="medicineGrid" class="items-grid" style="display: none;">
+                <!-- Medicine items will be added here -->
+                <div class="add-new-btn" onclick="showAddNewItemModal('medicine')">
+                    <i class="fas fa-plus"></i>
+                    <span>Add New Item</span>
+                </div>
+            </div>
+
+            <div id="othersGrid" class="items-grid" style="display: none;">
+                <!-- Other items will be added here -->
+                <div class="add-new-btn" onclick="showAddNewItemModal('others')">
+                    <i class="fas fa-plus"></i>
+                    <span>Add New Item</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="video-container">
+            <img src="{{ url_for('video_feed') }}" alt="Video Feed" class="video-feed">
+            <div class="controls">
+                <button class="btn btn-control btn-start" onclick="startCamera()">
+                    <i class="fas fa-play"></i> Start Camera
+                </button>
+                <button class="btn btn-control btn-analyze" onclick="analyzeFrame()" disabled>
+                    <i class="fas fa-search"></i> Analyze
+                </button>
+                <button class="btn btn-control btn-stop" onclick="stopCamera()" disabled>
+                    <i class="fas fa-stop"></i> Stop Camera
+                </button>
+            </div>
+        </div>
+
+        <div class="recent-detection">
+            <h2>Most Recent Detection</h2>
+            <div id="recentDetection">
+                <p class="text-muted">No recent detection available</p>
+            </div>
+        </div>
+
+        <div class="inventory-section" style="margin-top: 2rem;">
+            <h2 class="section-title">Current Inventory</h2>
+            <div class="inventory-controls">
+                <div class="search-container">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" class="search-input" placeholder="Search inventory..." 
+                           id="inventorySearch" oninput="filterInventory()">
+                </div>
+                <div class="inventory-stats">
+                    <div class="stat-item">
+                        <span class="stat-label">Total Items:</span>
+                        <span class="stat-value" id="totalItems">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Unique Fruits:</span>
+                        <span class="stat-value" id="uniqueFruits">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Avg. Ideal Temp:</span>
+                        <span class="stat-value" id="avgIdealTemp">0°C</span>
+                    </div>
+                    <button class="btn btn-danger" onclick="clearDatabase()">
+                        <i class="fas fa-trash"></i> Clear Database
+                    </button>
+                </div>
+            </div>
+            <div id="tempRecommendation" class="temp-recommendation">
+                <!-- Temperature recommendation will be shown here -->
+            </div>
+            <div class="inventory-grid" id="inventoryGrid">
+                <!-- Inventory items will be dynamically added here -->
+            </div>
+        </div>
+    </div>
+    
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Fruit Ripeness Detection System. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Add New Item Modal -->
+    <div class="modal fade" id="addNewItemModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add New Item</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="newItemForm">
+                        <div class="mb-3">
+                            <label class="form-label">Item Name</label>
+                            <input type="text" class="form-control" id="newItemName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Category</label>
+                            <select class="form-select" id="newItemCategory" required>
+                                <option value="">Select Category</option>
+                                <option value="Fruits">Fruits</option>
+                                <option value="Dairy">Dairy</option>
+                                <option value="Beverages">Beverages</option>
+                                <option value="Medicine">Medicine</option>
+                                <option value="Others">Others</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Ideal Temperature Range (°C)</label>
+                            <div class="row">
+                                <div class="col">
+                                    <input type="number" class="form-control" id="newItemTempMin" placeholder="Min" required step="0.1">
+                                </div>
+                                <div class="col">
+                                    <input type="number" class="form-control" id="newItemTempMax" placeholder="Max" required step="0.1">
+                                </div>
+                                <div class="col">
+                                    <input type="number" class="form-control" id="newItemTempIdeal" placeholder="Ideal" required step="0.1">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Expiry Date</label>
+                            <input type="date" class="form-control" id="newItemExpiry" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Quantity</label>
+                            <input type="number" class="form-control" id="newItemQuantity" value="1" min="1" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="addNewItemFromModal()">Add Item</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const socket = io({
+            transports: ['websocket'],
+            upgrade: false,
+            reconnection: true,
+            reconnectionDelay: 1000,
+            reconnectionDelayMax: 5000,
+            reconnectionAttempts: Infinity
+        });
+
+        let heartbeatInterval;
+
+        function startHeartbeat() {
+            heartbeatInterval = setInterval(() => {
+                socket.emit('heartbeat');
+            }, 20000);
+        }
+
+        function stopHeartbeat() {
+            if (heartbeatInterval) {
+                clearInterval(heartbeatInterval);
+            }
+        }
+
+        socket.on('connect', () => {
+            console.log('Connected to server');
+            startHeartbeat();
+            // Load inventory from localStorage on reconnection
+            loadInventoryFromStorage();
+        });
+
+        socket.on('disconnect', () => {
+            console.log('Disconnected from server');
+            stopHeartbeat();
+        });
+
+        socket.on('recent_detection_update', function(data) {
+            updateRecentDetection(data);
+        });
+
+        function updateRecentDetection(data) {
+            if (!data) {
+                document.getElementById('recentDetection').innerHTML = '<p class="text-muted">No recent detection available</p>';
+                return;
+            }
+
+            let detectionHtml = `
+                <div class="detection-details">
+                    <p><strong>Time:</strong> ${data.timestamp}</p>
+                    <p><strong>Detections:</strong></p>
+                    <ul class="list-unstyled">
+            `;
+
+            data.detections.forEach(det => {
+                detectionHtml += `
+                    <li class="mb-2">
+                        <div class="detection-item">
+                            <strong>Fruit:</strong> ${det.fruit}<br>
+                            <strong>Condition:</strong> ${det.condition}<br>
+                            <strong>Confidence:</strong> ${(det.confidence * 100).toFixed(1)}%
+                    <div class="mt-2">
+                                <button class="btn btn-sm btn-success add-to-inventory" 
+                                    onclick='addToInventory(${JSON.stringify(det)})'>
+                                    <i class="fas fa-plus"></i> Add to Inventory
+                                </button>
+                    </div>
+                        </div>
+                    </li>
+                `;
+            });
+
+            detectionHtml += `
+                    </ul>
+                </div>
+            `;
+
+            document.getElementById('recentDetection').innerHTML = detectionHtml;
+        }
+
+        function startCamera() {
+            socket.emit('start_camera', null, (response) => {
+                if (response && response.status === 'success') {
+                    console.log('Camera started successfully');
+                    document.querySelector('.btn-start').disabled = true;
+                    document.querySelector('.btn-analyze').disabled = false;
+                    document.querySelector('.btn-stop').disabled = false;
+                } else {
+                    console.error('Failed to start camera:', response);
+                }
+            });
+        }
+
+        function stopCamera() {
+            socket.emit('stop_camera', null, (response) => {
+                if (response && response.status === 'success') {
+                    console.log('Camera stopped successfully');
+                    document.querySelector('.btn-start').disabled = false;
+                    document.querySelector('.btn-analyze').disabled = true;
+                    document.querySelector('.btn-stop').disabled = true;
+                    // Clear the video feed and set black background
+                    const videoFeed = document.querySelector('.video-feed');
+                    videoFeed.src = '';
+                    videoFeed.style.backgroundColor = '#000000';
+                } else {
+                    console.error('Failed to stop camera:', response);
+                }
+            });
+        }
+
+        function analyzeFrame() {
+            socket.emit('analyze_frame', null, (response) => {
+                if (response && response.status === 'success') {
+                    console.log('Frame analyzed successfully');
+                } else {
+                    console.error('Failed to analyze frame:', response);
+                }
+            });
+        }
+
+        // Add error handling for socket events
+        socket.on('error', (error) => {
+            console.error('Socket error:', error);
+        });
+
+        socket.on('connect_error', (error) => {
+            console.error('Connection error:', error);
+            // Reset button states on connection error
+            document.querySelector('.btn-start').disabled = false;
+            document.querySelector('.btn-analyze').disabled = true;
+            document.querySelector('.btn-stop').disabled = true;
+        });
+
+        socket.on('camera_error', (error) => {
+            console.error('Camera error:', error);
+            // Reset button states on camera error
+            document.querySelector('.btn-start').disabled = false;
+            document.querySelector('.btn-analyze').disabled = true;
+            document.querySelector('.btn-stop').disabled = true;
+        });
+
+        // Handle navigation without page reload
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', async (e) => {
+                e.preventDefault();
+                const href = link.getAttribute('href');
+                
+                // Save current inventory state before navigation
+                saveInventoryToStorage();
+                
+                // Navigate to the new page
+                window.location.href = href;
+            });
+        });
+
+        // Handle browser back/forward buttons
+        window.addEventListener('popstate', () => {
+            // Load inventory data before page reload
+            saveInventoryToStorage();
+            window.location.reload();
+        });
+
+        // Replace the inventory update logic with this updated version
+        let inventoryItems = [];
+
+        const fruitTemperatures = {
+            'apple': { min: 0, max: 4, ideal: 2 },
+            'banana': { min: 13, max: 15, ideal: 14 },
+            'orange': { min: 3, max: 7, ideal: 5 },
+            'strawberry': { min: 0, max: 3, ideal: 2 },
+            'grape': { min: 0, max: 2, ideal: 1 },
+            'cheese': { min: 1, max: 4, ideal: 2 },
+            'milk': { min: 0, max: 4, ideal: 2 },
+            'butter': { min: 1, max: 4, ideal: 3 },
+            'soft drink': { min: 1, max: 4, ideal: 3 },
+            'orange juice': { min: 1, max: 4, ideal: 3 },
+            'apple juice': { min: 1, max: 4, ideal: 3 },
+            'default': { min: 2, max: 8, ideal: 4 }
+        };
+
+        // Add these functions for data persistence
+        function saveInventoryToStorage() {
+            localStorage.setItem('inventoryItems', JSON.stringify(inventoryItems));
+        }
+
+        function loadInventoryFromStorage() {
+            const savedInventory = localStorage.getItem('inventoryItems');
+            if (savedInventory) {
+                inventoryItems = JSON.parse(savedInventory);
+                updateInventoryDisplay();
+                updateInventoryStats();
+            }
+        }
+
+        // Add these variables at the top of your script section
+        let currentFridgeTemp = null;  // Initialize as null
+        let totalAverageTemp = 0;
+        let lastAlertTime = 0;  // To prevent too frequent alerts
+        const ALERT_COOLDOWN = 300000;  // 5 minutes in milliseconds
+
+        // Add this function to calculate total average temperature
+        function calculateTotalAverageTemp() {
+            if (inventoryItems.length === 0) {
+                totalAverageTemp = 0;
+                return;
+            }
+
+            let totalWeightedTemp = 0;
+            let totalItems = 0;
+
+            inventoryItems.forEach(item => {
+                const tempInfo = item.idealTemp || fruitTemperatures[item.fruit.toLowerCase()] || fruitTemperatures.default;
+                const itemCount = item.quantity || 1;
+                totalWeightedTemp += (tempInfo.ideal * itemCount);
+                totalItems += itemCount;
+            });
+
+            totalAverageTemp = totalWeightedTemp / totalItems;
+            return totalAverageTemp;
+        }
+
+        // Add this function to update temperature recommendation
+        function updateTemperatureRecommendation() {
+            const recommendationDiv = document.getElementById('tempRecommendation');
+            const avgTempDisplay = document.getElementById('avgIdealTemp');
+            
+            if (inventoryItems.length === 0) {
+                recommendationDiv.innerHTML = '<p>Add items to inventory to get temperature recommendations</p>';
+                avgTempDisplay.textContent = '0°C';
+                return;
+            }
+
+            const avgTemp = calculateTotalAverageTemp();
+            avgTempDisplay.textContent = `${avgTemp.toFixed(1)}°C`;
+
+            // If no sensor data available, show a message
+            if (currentFridgeTemp === null) {
+                recommendationDiv.innerHTML = `
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span>Waiting for temperature sensor data...</span>
+                `;
+                recommendationDiv.className = 'temp-recommendation';
+                return;
+            }
+
+            const tempDiff = currentFridgeTemp - avgTemp;
+            let recommendation = '';
+            let icon = '';
+            let className = '';
+
+            if (Math.abs(tempDiff) <= 0.5) {
+                recommendation = `Current temperature (${currentFridgeTemp.toFixed(1)}°C) is optimal`;
+                icon = 'fa-check-circle';
+                className = 'optimal';
+            } else if (tempDiff > 0.5) {
+                recommendation = `Decrease temperature from ${currentFridgeTemp.toFixed(1)}°C to ${avgTemp.toFixed(1)}°C`;
+                icon = 'fa-arrow-down';
+                className = 'decrease';
+            } else {
+                recommendation = `Increase temperature from ${currentFridgeTemp.toFixed(1)}°C to ${avgTemp.toFixed(1)}°C`;
+                icon = 'fa-arrow-up';
+                className = 'increase';
+            }
+
+            recommendationDiv.innerHTML = `
+                <i class="fas ${icon}"></i>
+                <span>${recommendation}</span>
+            `;
+            recommendationDiv.className = `temp-recommendation ${className}`;
+        }
+
+        // Modify the updateInventoryStats function
+        function updateInventoryStats() {
+            const totalItems = inventoryItems.reduce((sum, item) => sum + (item.quantity || 1), 0);
+            const uniqueFruits = new Set(inventoryItems.map(item => item.fruit)).size;
+            
+            // Calculate condition counts
+            const conditionCounts = inventoryItems.reduce((counts, item) => {
+                const quantity = item.quantity || 1;
+                const currentDate = new Date();
+                const expiryDate = new Date(item.expiryDate);
+                const daysUntilExpiry = Math.ceil((expiryDate - currentDate) / (1000 * 60 * 60 * 24));
+                
+                if (item.condition.toLowerCase() === 'rotten' || item.condition.toLowerCase() === 'overripe' || daysUntilExpiry < 0) {
+                    counts.spoiled += quantity;
+                } else if (daysUntilExpiry <= 90) { // Changed from 2 days to 90 days (3 months)
+                    counts.expiring += quantity;
+                } else {
+                    counts.good += quantity;
+                }
+                return counts;
+            }, { good: 0, expiring: 0, spoiled: 0 });
+
+            // Update dashboard stats
+            document.getElementById('dashboardTotal').textContent = totalItems;
+            document.getElementById('dashboardGood').textContent = conditionCounts.good;
+            document.getElementById('dashboardExpiring').textContent = conditionCounts.expiring;
+            document.getElementById('dashboardSpoiled').textContent = conditionCounts.spoiled;
+            
+            // Update other stats
+            document.getElementById('totalItems').textContent = totalItems;
+            document.getElementById('uniqueFruits').textContent = uniqueFruits;
+            
+            // Update temperature recommendation
+            updateTemperatureRecommendation();
+        }
+
+        // Update the initial temperature on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load saved temperature from localStorage if available
+            const savedTemp = localStorage.getItem('currentTemp');
+            if (savedTemp) {
+                currentFridgeTemp = parseFloat(savedTemp);
+            }
+            loadInventoryFromStorage();
+            initializeQuickAddButtons();
+            updateTemperatureRecommendation();
+        });
+
+        // Handle inventory updates from server
+        socket.on('inventory_updated', function(data) {
+            if (data && data.inventory) {
+                inventoryItems = data.inventory;
+                updateInventoryDisplay();
+                updateInventoryStats();
+                saveInventoryToStorage();
+            }
+        });
+
+        // Load inventory data when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            loadInventoryFromStorage();
+            initializeQuickAddButtons();
+        });
+
+        // Add these functions for the new Quick Add functionality
+        function showCategory(category) {
+            // Hide all grids
+            document.querySelectorAll('.items-grid').forEach(grid => {
+                grid.style.display = 'none';
+            });
+            
+            // Show selected grid
+            document.getElementById(`${category}Grid`).style.display = 'grid';
+            
+            // Update active tab
+            document.querySelectorAll('.category-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+        }
+
+        function quickAddItem(fruit) {
+            const currentDate = new Date();
+            const expiryDate = new Date();
+            expiryDate.setDate(currentDate.getDate() + 7); // Default 7 days expiry
+            
+            const newItem = {
+                fruit: fruit,
+                condition: 'Fresh',
+                quantity: 1,
+                expiryDate: expiryDate.toISOString(),
+                idealTemp: fruitTemperatures[fruit.toLowerCase()] || fruitTemperatures.default,
+                confidence: 1.0  // Add confidence for display
+            };
+            
+            // Check if item already exists in inventory
+            const existingIndex = inventoryItems.findIndex(item => 
+                item.fruit === fruit && 
+                item.condition === 'Fresh'
+            );
+
+            if (existingIndex === -1) {
+                // Add new item
+                inventoryItems.push(newItem);
+            } else {
+                // Update quantity of existing item
+                inventoryItems[existingIndex].quantity = (inventoryItems[existingIndex].quantity || 1) + 1;
+            }
+
+            // Update display and storage
+            updateInventoryDisplay();
+            updateInventoryStats();
+            saveInventoryToStorage();
+            socket.emit('update_inventory', { inventory: inventoryItems });
+
+            // Show success message
+            showSuccessMessage(`Added ${fruit} to inventory`);
+        }
+
+        function showSuccessMessage(message) {
+            const successMsg = document.createElement('div');
+            successMsg.className = 'alert alert-success';
+            successMsg.style.position = 'fixed';
+            successMsg.style.top = '20px';
+            successMsg.style.right = '20px';
+            successMsg.style.padding = '1rem';
+            successMsg.style.background = '#2ecc71';
+            successMsg.style.color = 'white';
+            successMsg.style.borderRadius = '8px';
+            successMsg.style.boxShadow = '0 4px 6px rgba(0,0,0,0.1)';
+            successMsg.style.zIndex = '1000';
+            successMsg.innerHTML = `
+                <i class="fas fa-check-circle"></i>
+                ${message}
+            `;
+            document.body.appendChild(successMsg);
+
+            setTimeout(() => {
+                successMsg.remove();
+            }, 3000);
+        }
+
+        function showAddNewItemModal(category) {
+            // Set the category in the dropdown
+            document.getElementById('newItemCategory').value = category;
+            
+            // Set minimum date as today for expiry
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('newItemExpiry').min = today;
+            
+            // Show the modal
+            const modal = new bootstrap.Modal(document.getElementById('addNewItemModal'));
+            modal.show();
+        }
+
+        function initializeQuickAddButtons() {
+            // Store default buttons for each category
+            const defaultButtons = {
+                fruits: [
+                    { name: 'Apple', icon: '🍎' },
+                    { name: 'Banana', icon: '🍌' },
+                    { name: 'Orange', icon: '🍊' }
+                ],
+                dairy: [
+                    { name: 'Cheese', icon: '🧀' },
+                    { name: 'Milk', icon: '🥛' },
+                    { name: 'Butter', icon: '🧈' }
+                ],
+                beverages: [
+                    { name: 'Soft Drink', icon: '🥤' },
+                    { name: 'Orange Juice', icon: '🧃' },
+                    { name: 'Apple Juice', icon: '🧃' }
+                ]
+            };
+
+            // Clear and reinitialize each category section
+            const categories = ['fruits', 'dairy', 'beverages', 'medicine', 'others'];
+            categories.forEach(category => {
+                const section = document.querySelector(`#${category}Grid`);
+                if (section) {
+                    // Clear existing content
+                    section.innerHTML = '';
+                    
+                    // Add default buttons if they exist for this category
+                    if (defaultButtons[category]) {
+                        defaultButtons[category].forEach(item => {
+                            const button = createQuickAddButton(item.name, item.icon);
+                            section.appendChild(button);
+                        });
+                    }
+
+                    // Add "Add New Item" button
+                    const addNewButton = document.createElement('div');
+                    addNewButton.className = 'add-new-btn';
+                    addNewButton.onclick = () => showAddNewItemModal(category);
+                    addNewButton.innerHTML = `
+                        <i class="fas fa-plus"></i>
+                        <span>Add New Item</span>
+                    `;
+                    section.appendChild(addNewButton);
+                }
+            });
+
+            // Add quick add buttons for custom items from inventory
+            inventoryItems.forEach(item => {
+                // Only add if it's not a default item
+                const isDefault = Object.values(defaultButtons).some(categoryItems => 
+                    categoryItems.some(defaultItem => defaultItem.name === item.fruit)
+                );
+                
+                if (!isDefault) {
+                    addQuickAddButton(item.fruit, item.category);
+                }
+            });
+        }
+
+        // Function to add a new quick add button
+        function addQuickAddButton(itemName, category) {
+            const categoryGrid = document.getElementById(`${category.toLowerCase()}Grid`);
+            if (!categoryGrid) return;
+
+            // Check if button already exists by checking all item cards
+            const existingButtons = categoryGrid.querySelectorAll('.item-card');
+            const buttonExists = Array.from(existingButtons).some(button => 
+                button.querySelector('.item-name').textContent === itemName
+            );
+
+            if (buttonExists) return;
+
+            // Create new button
+            const button = createQuickAddButton(itemName, '📦');
+            
+            // Find the "Add New Item" button
+            const addNewButton = categoryGrid.querySelector('.add-new-btn');
+            
+            // Insert the new button before the "Add New Item" button
+            if (addNewButton) {
+                categoryGrid.insertBefore(button, addNewButton);
+            } else {
+                categoryGrid.appendChild(button);
+            }
+        }
+
+        // Function to create a quick add button
+        function createQuickAddButton(itemName, icon) {
+            const button = document.createElement('div');
+            button.className = 'item-card';
+            button.onclick = () => quickAddItem(itemName);
+            button.innerHTML = `
+                <div class="item-icon">${icon}</div>
+                <div class="item-name">${itemName}</div>
+            `;
+            return button;
+        }
+
+        // Update the addNewItemFromModal function to handle quick add buttons
+        function addNewItemFromModal() {
+            const form = document.getElementById('newItemForm');
+            
+            // Check form validity
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+
+            // Get values from form
+            const name = document.getElementById('newItemName').value;
+            const category = document.getElementById('newItemCategory').value;
+            const tempMin = parseFloat(document.getElementById('newItemTempMin').value);
+            const tempMax = parseFloat(document.getElementById('newItemTempMax').value);
+            const tempIdeal = parseFloat(document.getElementById('newItemTempIdeal').value);
+            const expiry = document.getElementById('newItemExpiry').value;
+            const quantity = parseInt(document.getElementById('newItemQuantity').value);
+
+            // Validate temperature range
+            if (tempMin > tempMax || tempIdeal < tempMin || tempIdeal > tempMax) {
+                alert('Invalid temperature range. Please ensure Min ≤ Ideal ≤ Max');
+                return;
+            }
+
+            // Add temperature range to fruitTemperatures object
+            fruitTemperatures[name.toLowerCase()] = {
+                min: tempMin,
+                max: tempMax,
+                ideal: tempIdeal
+            };
+
+            // Create new item
+            const newItem = {
+                fruit: name,
+                category: category,
+                condition: 'Fresh',
+                quantity: quantity,
+                expiryDate: expiry,
+                idealTemp: fruitTemperatures[name.toLowerCase()]
+            };
+
+            // Add to inventory
+            inventoryItems.push(newItem);
+
+            // Add new quick add button to the appropriate category section
+            addQuickAddButton(name, category);
+
+            // Update display and storage
+            updateInventoryDisplay();
+            updateInventoryStats();
+            saveInventoryToStorage();
+            socket.emit('update_inventory', { inventory: inventoryItems });
+
+            // Show success message
+            showSuccessMessage(`Added ${name} to inventory`);
+
+            // Close modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('addNewItemModal'));
+            modal.hide();
+
+            // Reset form
+            form.reset();
+        }
+
+        // Add this function to clear the database
+        function clearDatabase() {
+            if (confirm('Are you sure you want to clear all inventory items? This action cannot be undone.')) {
+                // Clear inventory array
+                inventoryItems = [];
+                
+                // Clear localStorage
+                localStorage.removeItem('inventoryItems');
+                
+                // Update display
+                updateInventoryDisplay();
+                updateInventoryStats();
+                
+                // Emit update to server
+                socket.emit('update_inventory', { inventory: [] });
+                
+                // Show success message
+                showSuccessMessage('Database cleared successfully');
+            }
+        }
+
+        // Add this function to show temperature alerts
+        function showTemperatureAlert(temp) {
+            const currentTime = Date.now();
+            if (currentTime - lastAlertTime < ALERT_COOLDOWN) {
+                return; // Don't show alert if we're in cooldown period
+            }
+
+            let alertMessage = '';
+            let alertClass = '';
+            let icon = '';
+
+            if (temp > 8) {
+                alertMessage = `Warning: Fridge temperature is too high (${temp.toFixed(1)}°C)!`;
+                alertClass = 'alert-danger';
+                icon = 'fa-exclamation-triangle';
+            } else if (temp < 0) {
+                alertMessage = `Warning: Fridge temperature is too low (${temp.toFixed(1)}°C)!`;
+                alertClass = 'alert-warning';
+                icon = 'fa-exclamation-triangle';
+            } else {
+                return; // No alert needed for normal temperatures
+            }
+
+            // Create alert element
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert ${alertClass} alert-dismissible fade show`;
+            alertDiv.style.position = 'fixed';
+            alertDiv.style.top = '20px';
+            alertDiv.style.left = '50%';
+            alertDiv.style.transform = 'translateX(-50%)';
+            alertDiv.style.zIndex = '1000';
+            alertDiv.style.maxWidth = '80%';
+            alertDiv.style.textAlign = 'center';
+            alertDiv.style.boxShadow = '0 4px 6px rgba(0,0,0,0.1)';
+            alertDiv.innerHTML = `
+                <i class="fas ${icon}"></i>
+                ${alertMessage}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+
+            // Add alert to page
+            document.body.appendChild(alertDiv);
+
+            // Auto dismiss after 10 seconds
+            setTimeout(() => {
+                alertDiv.remove();
+            }, 10000);
+
+            lastAlertTime = currentTime;
+        }
+
+        // Update the socket listener for sensor updates
+        socket.on('sensor_update', function(data) {
+            if (data && data.temperature !== undefined) {
+                // Update current fridge temperature from sensor
+                currentFridgeTemp = parseFloat(data.temperature);
+                
+                // Store sensor values
+                localStorage.setItem('currentTemp', data.temperature);
+                localStorage.setItem('currentHumidity', data.humidity);
+                localStorage.setItem('currentMQ135', data.mq135);
+                localStorage.setItem('currentMQ2', data.mq2);
+                
+                // Show temperature alert if needed
+                showTemperatureAlert(currentFridgeTemp);
+                
+                // Update temperature recommendation and inventory display
+                updateTemperatureRecommendation();
+                updateInventoryDisplay();
+            }
+        });
+
+        // Add these functions for inventory management
+        function updateInventoryDisplay(searchTerm = '') {
+            const inventoryGrid = document.getElementById('inventoryGrid');
+            const filteredItems = searchTerm ? 
+                inventoryItems.filter(item => 
+                    item.fruit.toLowerCase().includes(searchTerm) || 
+                    item.condition.toLowerCase().includes(searchTerm)
+                ) : inventoryItems;
+
+            if (filteredItems.length === 0) {
+                inventoryGrid.innerHTML = '<p class="text-muted">No items in inventory</p>';
+                return;
+            }
+
+            const fruitIcons = {
+                'apple': '🍎',
+                'banana': '🍌',
+                'orange': '🍊',
+                'strawberry': '🍓',
+                'grape': '🍇',
+                'cheese': '🧀',
+                'milk': '🥛',
+                'butter': '🧈',
+                'soft drink': '🥤',
+                'orange juice': '🧃',
+                'apple juice': '🧃',
+                'mango': '🥭',
+                'pineapple': '🍍',
+                'watermelon': '🍉',
+                'peach': '🍑',
+                'pear': '🍐',
+                'lemon': '🍋',
+                'coconut': '🥥',
+                'avocado': '🥑',
+                'tomato': '🍅',
+                'carrot': '🥕',
+                'bread': '🍞',
+                'egg': '🥚',
+                'meat': '🥩',
+                'fish': '🐟',
+                'chicken': '🍗',
+                'yogurt': '🥛',
+                'ice cream': '🍨',
+                'cake': '🍰',
+                'pizza': '🍕',
+                'sandwich': '🥪',
+                'salad': '🥗',
+                'default': '📦'
+            };
+
+            const statusClasses = {
+                'fresh': 'status-fresh',
+                'ripe': 'status-ripe',
+                'overripe': 'status-overripe',
+                'rotten': 'status-overripe',
+                'about to spoil': 'status-ripe'
+            };
+
+            let inventoryHtml = '';
+            filteredItems.forEach((item, index) => {
+                const icon = fruitIcons[item.fruit.toLowerCase()] || fruitIcons.default;
+                const statusClass = statusClasses[item.condition.toLowerCase()] || 'status-fresh';
+                const tempInfo = item.idealTemp || fruitTemperatures[item.fruit.toLowerCase()] || fruitTemperatures.default;
+                
+                // Calculate days until expiry
+                const currentDate = new Date();
+                const expiryDate = new Date(item.expiryDate);
+                const daysUntilExpiry = Math.ceil((expiryDate - currentDate) / (1000 * 60 * 60 * 24));
+                
+                // Determine if item is about to spoil or spoiled
+                const isAboutToSpoil = item.condition.toLowerCase() === 'about to spoil' || 
+                                     (daysUntilExpiry <= 90 && daysUntilExpiry > 0);
+                const isSpoiled = item.condition.toLowerCase() === 'rotten' || 
+                                 item.condition.toLowerCase() === 'overripe' || 
+                                 daysUntilExpiry < 0;
+                
+                inventoryHtml += `
+                    <div class="inventory-item ${isAboutToSpoil ? 'aboutToSpoil' : ''} ${isSpoiled ? 'spoiled' : ''}">
+                        <div class="fruit-icon">${icon}</div>
+                        <div class="fruit-details">
+                            <div class="fruit-name">${item.fruit}</div>
+                            <div class="fruit-status">
+                                <span class="status-badge ${isAboutToSpoil ? 'status-ripe' : statusClass}">${item.condition}</span>
+                                <span>${(item.confidence * 100).toFixed(1)}% confidence</span>
+                            </div>
+                            <div class="ideal-temp">
+                                <i class="fas fa-thermometer-half temp-icon"></i>
+                                <span>Ideal: ${tempInfo.min}°C - ${tempInfo.max}°C</span>
+                            </div>
+                            ${isAboutToSpoil ? `<div class="expiry-warning">Expires in ${daysUntilExpiry} days</div>` : ''}
+                            ${isSpoiled ? `<div class="expiry-warning">Spoiled</div>` : ''}
+                            <div class="quantity-controls">
+                                <button class="quantity-btn" onclick="updateQuantity(${index}, -1)">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                <span class="quantity-display">${item.quantity || 1}</span>
+                                <button class="quantity-btn" onclick="updateQuantity(${index}, 1)">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <button class="btn btn-sm btn-danger remove-from-inventory" 
+                            onclick="removeFromInventory(${index})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                `;
+            });
+            
+            inventoryGrid.innerHTML = inventoryHtml;
+        }
+
+        function filterInventory() {
+            const searchTerm = document.getElementById('inventorySearch').value.toLowerCase();
+            updateInventoryDisplay(searchTerm);
+        }
+
+        function updateQuantity(index, change) {
+            const item = inventoryItems[index];
+            const newQuantity = (item.quantity || 1) + change;
+            
+            if (newQuantity > 0) {
+                item.quantity = newQuantity;
+                updateInventoryDisplay();
+                updateInventoryStats();
+                saveInventoryToStorage();
+                socket.emit('update_inventory', { inventory: inventoryItems });
+            } else if (newQuantity <= 0) {
+                removeFromInventory(index);
+            }
+        }
+
+        function removeFromInventory(index) {
+            inventoryItems.splice(index, 1);
+            updateInventoryDisplay();
+            updateInventoryStats();
+            saveInventoryToStorage();
+            socket.emit('update_inventory', { inventory: inventoryItems });
+        }
+
+        function addToInventory(item) {
+            // Add ideal temperature information
+            const tempInfo = fruitTemperatures[item.fruit.toLowerCase()] || fruitTemperatures.default;
+            item.idealTemp = tempInfo;
+
+            // Check if item already exists in inventory
+            const existingIndex = inventoryItems.findIndex(i => 
+                i.fruit === item.fruit && 
+                i.condition === item.condition
+            );
+
+            if (existingIndex === -1) {
+                item.quantity = 1;
+                inventoryItems.push(item);
+            } else {
+                inventoryItems[existingIndex].quantity = (inventoryItems[existingIndex].quantity || 1) + 1;
+            }
+
+            updateInventoryDisplay();
+            updateInventoryStats();
+            saveInventoryToStorage();
+            socket.emit('update_inventory', { inventory: inventoryItems });
+            
+            // Show success notification
+            showSuccessMessage(`Added ${item.fruit} to inventory`);
+        }
+    </script>
+</body>
+</html> 

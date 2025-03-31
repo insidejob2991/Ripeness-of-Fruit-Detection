@@ -1,0 +1,7 @@
+{
+    "example@example.com": {
+        "id": 1,
+        "email": "example@example.com",
+        "password_hash": "REPLACE_WITH_YOUR_PASSWORD_HASH"
+    }
+} 

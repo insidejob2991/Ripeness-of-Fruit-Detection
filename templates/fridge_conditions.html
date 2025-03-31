@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fridge Conditions - Fruit Ripeness Detection</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #2ecc71;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --text-color: #2c3e50;
+            --bg-color: #f0f2f5;
+            --card-bg: #ffffff;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--text-color);
+            line-height: 1.6;
+            background-image: url('https://images.pexels.com/photos/281260/pexels-photo-281260.jpeg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.6);
+            z-index: -1;
+        }
+
+        .navbar {
+            background: rgb(0,127,255);
+            background: linear-gradient(159deg, rgba(0,127,255,1) 0%, rgba(42,82,190,1) 100%);
+            box-shadow: 0 2px 15px rgba(0,0,0,0.2);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #ffffff !important;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            background: linear-gradient(45deg, #fff, #e0e0e0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+        }
+
+        .navbar-brand:hover {
+            transform: translateY(-2px);
+            background: linear-gradient(45deg, #4fc3f7, #ffffff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.9) !important;
+            font-weight: 500;
+            padding: 0.5rem 1.2rem !important;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            margin: 0 0.3rem;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-link:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.2),
+                transparent
+            );
+            transition: 0.5s;
+        }
+
+        .nav-link:hover:before {
+            left: 100%;
+        }
+
+        .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #ffffff !important;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .nav-link.active {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+            color: #ffffff !important;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-link i {
+            margin-right: 5px;
+            transition: transform 0.3s ease;
+        }
+
+        .nav-link:hover i {
+            transform: scale(1.1);
+        }
+
+        .navbar-toggler {
+            border-color: rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .navbar-toggler-icon {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255, 255, 255, 0.9)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+        }
+
+        .main-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .title-section {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem 0;
+        }
+
+        .title-section h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: slideDown 0.5s ease;
+        }
+
+        .title-section p {
+            font-size: 1.3rem;
+            color: #666;
+            animation: fadeIn 0.5s ease 0.2s both;
+        }
+
+        .conditions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .condition-card {
+            border-radius: 10px;
+            padding: 20px;
+            margin: 10px;
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .condition-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .condition-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: #2ecc71;
+        }
+
+        .condition-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin: 1rem 0;
+            color: #2ecc71;
+        }
+
+        .progress-bar {
+            height: 10px;
+            border-radius: 5px;
+            background: #e9ecef;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            transition: all 0.3s ease;
+            background: linear-gradient(90deg, #4CAF50, #8BC34A);
+        }
+        
+        .progress-fill.warning {
+            background: linear-gradient(90deg, #FFA726, #FF7043);
+        }
+        
+        .progress-fill.danger {
+            background: linear-gradient(90deg, #EF5350, #E53935);
+        }
+
+        .condition-status {
+            font-size: 1rem;
+            margin-top: 0.5rem;
+            color: #666;
+        }
+
+        .optimal-range {
+            font-size: 0.9rem;
+            color: #888;
+            margin-top: 0.5rem;
+        }
+
+        .status-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .status-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .status-icon {
+            font-size: 2rem;
+            margin: 1rem 0;
+            color: #2ecc71;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            font-weight: bold;
+        }
+
+        .status-success {
+            background-color: #2ecc71;
+            color: white;
+        }
+
+        .status-warning {
+            background-color: #f1c40f;
+            color: white;
+        }
+
+        .status-danger {
+            background-color: #e74c3c;
+            color: white;
+        }
+
+        .alerts-section {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .alerts-container {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .alert-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .alert-icon {
+            font-size: 1.5rem;
+            margin-right: 1rem;
+            color: #2ecc71;
+        }
+
+        .alert-content {
+            flex: 1;
+        }
+
+        .alert-message {
+            font-weight: 500;
+        }
+
+        .alert-time {
+            font-size: 0.9rem;
+            color: #888;
+            margin-top: 0.25rem;
+        }
+
+        .alert-box {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            display: none;
+        }
+        
+        .alert-warning {
+            background-color: #fff3cd;
+            border: 1px solid #ffeeba;
+            color: #856404;
+        }
+        
+        .alert-danger {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideDown {
+            from { 
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideUp {
+            from { 
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .conditions-grid,
+            .status-cards {
+                grid-template-columns: 1fr;
+            }
+            .title-section h1 {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="/">Smart Fridge</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/"><i class="fas fa-home"></i> Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/fridge_conditions"><i class="fas fa-thermometer-half"></i> Fridge Conditions</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/recipes"><i class="fas fa-utensils"></i> Recipes</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        <div class="title-section">
+            <h1>Fridge Conditions</h1>
+            <p>Monitor and control your fridge's environment in real-time</p>
+        </div>
+
+        <div class="conditions-grid">
+            <div class="condition-card">
+                <div class="condition-icon">
+                    <i class="fas fa-thermometer-half"></i>
+                </div>
+                <h3>Temperature</h3>
+                <div class="condition-value" id="temperatureValue">0°C</div>
+                <div id="temperatureBar" class="progress-bar">
+                    <div class="progress-fill"></div>
+                </div>
+                <div class="condition-status" id="temperatureStatus">Checking...</div>
+                <div class="optimal-range">Optimal range: 2°C - 8°C</div>
+                <div id="temperatureAlert" class="alert-box alert-warning"></div>
+            </div>
+
+            <div class="condition-card">
+                <div class="condition-icon">
+                    <i class="fas fa-tint"></i>
+                </div>
+                <h3>Humidity</h3>
+                <div class="condition-value" id="humidityValue">0%</div>
+                <div id="humidityBar" class="progress-bar">
+                    <div class="progress-fill"></div>
+                </div>
+                <div class="condition-status" id="humidityStatus">Checking...</div>
+                <div class="optimal-range">Optimal range: 30% - 60%</div>
+                <div id="humidityAlert" class="alert-box alert-warning"></div>
+            </div>
+
+            <div class="condition-card">
+                <div class="condition-icon">
+                    <i class="fas fa-wind"></i>
+                </div>
+                <h3>NH3/CO2 Levels</h3>
+                <div class="condition-value" id="mq135Value">0 ppm</div>
+                <div id="mq135Bar" class="progress-bar">
+                    <div class="progress-fill"></div>
+                </div>
+                <div class="condition-status" id="mq135Status">Checking...</div>
+                <div class="optimal-range">Baseline: 110 ppm</div>
+                <div id="mq135Alert" class="alert-box"></div>
+            </div>
+
+            <div class="condition-card">
+                <div class="condition-icon">
+                    <i class="fas fa-fire"></i>
+                </div>
+                <h3>Flammable Gases</h3>
+                <div class="condition-value" id="mq2Value">0 ppm</div>
+                <div id="mq2Bar" class="progress-bar">
+                    <div class="progress-fill"></div>
+                </div>
+                <div class="condition-status" id="mq2Status">Checking...</div>
+                <div class="optimal-range">Baseline: 260 ppm</div>
+                <div id="mq2Alert" class="alert-box"></div>
+            </div>
+        </div>
+
+        <div class="status-cards">
+            <div class="status-card">
+                <h3 class="status-title">Door Status</h3>
+                <div class="status-icon">
+                    <i class="fas fa-door-closed" id="doorIcon"></i>
+                </div>
+                <div class="status-badge status-success" id="doorStatus">Closed</div>
+            </div>
+
+            <div class="status-card">
+                <h3 class="status-title">Power Status</h3>
+                <div class="status-icon">
+                    <i class="fas fa-plug" id="powerIcon"></i>
+                </div>
+                <div class="status-badge status-success" id="powerStatus">On</div>
+            </div>
+        </div>
+
+        <div class="alerts-section">
+            <h3>Recent Alerts</h3>
+            <div class="alerts-container" id="alertsList">
+                <div class="alert-item">
+                    <div class="alert-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="alert-content">
+                        <div class="alert-message">No recent alerts</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script>
+        // Initialize Socket.IO connection
+        const socket = io();
+        
+        // Function to update temperature display
+        function updateTemperature(temp) {
+            const tempValue = document.getElementById('temperatureValue');
+            const tempFill = document.querySelector('#temperatureBar .progress-fill');
+            const tempStatus = document.getElementById('temperatureStatus');
+            
+            tempValue.textContent = `${temp.toFixed(1)}°C`;
+            
+            // Calculate progress percentage (assuming optimal range is 2-8°C)
+            const minTemp = 2;
+            const maxTemp = 8;
+            const optimalTemp = 4;
+            
+            let progress = 0;
+            if (temp < minTemp) {
+                progress = 0;
+            } else if (temp > maxTemp) {
+                progress = 100;
+            } else {
+                progress = ((temp - minTemp) / (maxTemp - minTemp)) * 100;
+            }
+            
+            tempFill.style.width = `${progress}%`;
+            
+            // Update status text
+            if (temp < minTemp) {
+                tempStatus.textContent = 'Too Cold';
+                tempFill.classList.add('bg-info');
+            } else if (temp > maxTemp) {
+                tempStatus.textContent = 'Too Warm';
+                tempFill.classList.add('bg-danger');
+            } else {
+                tempStatus.textContent = 'Optimal';
+                tempFill.classList.add('bg-success');
+            }
+        }
+        
+        // Function to update humidity display
+        function updateHumidity(humidity) {
+            const humidityValue = document.getElementById('humidityValue');
+            const humFill = document.querySelector('#humidityBar .progress-fill');
+            const humidityStatus = document.getElementById('humidityStatus');
+            
+            humidityValue.textContent = `${humidity.toFixed(1)}%`;
+            
+            // Calculate progress percentage (assuming optimal range is 40-60%)
+            const minHumidity = 40;
+            const maxHumidity = 60;
+            const optimalHumidity = 50;
+            
+            let progress = 0;
+            if (humidity < minHumidity) {
+                progress = 0;
+            } else if (humidity > maxHumidity) {
+                progress = 100;
+            } else {
+                progress = ((humidity - minHumidity) / (maxHumidity - minHumidity)) * 100;
+            }
+            
+            humFill.style.width = `${progress}%`;
+            
+            // Update status text
+            if (humidity < minHumidity) {
+                humidityStatus.textContent = 'Too Dry';
+                humFill.classList.add('bg-warning');
+            } else if (humidity > maxHumidity) {
+                humidityStatus.textContent = 'Too Humid';
+                humFill.classList.add('bg-info');
+            } else {
+                humidityStatus.textContent = 'Optimal';
+                humFill.classList.add('bg-success');
+            }
+        }
+        
+        // Function to update door status
+        function updateDoorStatus(isOpen) {
+            const doorStatus = document.getElementById('doorStatus');
+            const doorIcon = document.getElementById('doorIcon');
+            
+            if (isOpen) {
+                doorStatus.textContent = 'Open';
+                doorStatus.className = 'status-badge status-warning';
+                doorIcon.className = 'fas fa-door-open';
+            } else {
+                doorStatus.textContent = 'Closed';
+                doorStatus.className = 'status-badge status-success';
+                doorIcon.className = 'fas fa-door-closed';
+            }
+        }
+        
+        // Function to update power status
+        function updatePowerStatus(isOn) {
+            const powerStatus = document.getElementById('powerStatus');
+            const powerIcon = document.getElementById('powerIcon');
+            
+            if (isOn) {
+                powerStatus.textContent = 'On';
+                powerStatus.className = 'status-badge status-success';
+                powerIcon.className = 'fas fa-plug';
+            } else {
+                powerStatus.textContent = 'Off';
+                powerStatus.className = 'status-badge status-danger';
+                powerIcon.className = 'fas fa-plug';
+            }
+        }
+        
+        // Function to update gas sensor displays
+        function updateGasSensors(data) {
+            // Temperature
+            const tempValue = parseFloat(data.temperature).toFixed(1);
+            document.getElementById('temperatureValue').textContent = tempValue + '°C';
+            const tempBar = document.querySelector('#temperatureBar .progress-fill');
+            tempBar.style.width = Math.min((tempValue / 40) * 100, 100) + '%';
+            document.getElementById('temperatureStatus').textContent = tempValue > 8 ? 'Too Warm' : (tempValue < 2 ? 'Too Cold' : 'Optimal');
+            if (tempValue > 8) {
+                tempBar.classList.add('warning');
+            } else {
+                tempBar.classList.remove('warning');
+            }
+
+            // Humidity
+            const humValue = parseFloat(data.humidity).toFixed(1);
+            document.getElementById('humidityValue').textContent = humValue + '%';
+            const humBar = document.querySelector('#humidityBar .progress-fill');
+            humBar.style.width = humValue + '%';
+            document.getElementById('humidityStatus').textContent = humValue > 60 ? 'Too Humid' : (humValue < 30 ? 'Too Dry' : 'Optimal');
+            if (humValue > 60 || humValue < 30) {
+                humBar.classList.add('warning');
+            } else {
+                humBar.classList.remove('warning');
+            }
+
+            // MQ135 (NH3/CO2)
+            const mq135Value = parseFloat(data.mq135).toFixed(1);
+            document.getElementById('mq135Value').textContent = mq135Value + ' ppm';
+            const mq135Bar = document.querySelector('#mq135Bar .progress-fill');
+            // Calculate percentage relative to threshold (130 ppm)
+            const mq135Percentage = Math.min((mq135Value / 130) * 100, 100);
+            mq135Bar.style.width = Math.max(mq135Percentage, 0) + '%';
+            
+            // MQ135 status logic
+            const mq135Status = document.getElementById('mq135Status');
+            if (mq135Value > 130) { // elevated level for fridge condition
+                mq135Status.textContent = 'Elevated';
+                mq135Bar.classList.remove('warning');
+                mq135Bar.classList.add('danger');
+            } else {
+                mq135Status.textContent = 'Normal';
+                mq135Bar.classList.remove('warning', 'danger');
+            }
+
+            // MQ2 (Flammable Gases)
+            const mq2Value = parseFloat(data.mq2).toFixed(1);
+            document.getElementById('mq2Value').textContent = mq2Value + ' ppm';
+            const mq2Bar = document.querySelector('#mq2Bar .progress-fill');
+            // Calculate percentage relative to threshold (280 ppm)
+            const mq2Percentage = Math.min((mq2Value / 280) * 100, 100);
+            mq2Bar.style.width = Math.max(mq2Percentage, 0) + '%';
+            
+            // MQ2 status logic
+            const mq2Status = document.getElementById('mq2Status');
+            if (mq2Value > 280) { // elevated level for fridge condition
+                mq2Status.textContent = 'Elevated';
+                mq2Bar.classList.remove('warning');
+                mq2Bar.classList.add('danger');
+            } else {
+                mq2Status.textContent = 'Normal';
+                mq2Bar.classList.remove('warning', 'danger');
+            }
+
+            // Update door and power status if provided
+            if (data.door_status) {
+                const doorStatus = document.getElementById('doorStatus');
+                if (doorStatus) {
+                    doorStatus.textContent = data.door_status.charAt(0).toUpperCase() + data.door_status.slice(1);
+                }
+            }
+            if (data.power_status) {
+                const powerStatus = document.getElementById('powerStatus');
+                if (powerStatus) {
+                    powerStatus.textContent = data.power_status.charAt(0).toUpperCase() + data.power_status.slice(1);
+                }
+            }
+        }
+        
+        // Socket event handlers
+        socket.on('connect', () => {
+            console.log('Connected to server');
+            // Request initial sensor data
+            socket.emit('request_sensor_data');
+        });
+        
+        socket.on('sensor_update', function(data) {
+            // Temperature
+            const tempValue = parseFloat(data.temperature).toFixed(1);
+            document.getElementById('temperatureValue').textContent = tempValue + '°C';
+            const tempBar = document.querySelector('#temperatureBar .progress-fill');
+            tempBar.style.width = Math.min((tempValue / 40) * 100, 100) + '%';
+            document.getElementById('temperatureStatus').textContent = tempValue > 8 ? 'Too Warm' : (tempValue < 2 ? 'Too Cold' : 'Optimal');
+            if (tempValue > 8) {
+                tempBar.classList.add('warning');
+            } else {
+                tempBar.classList.remove('warning');
+            }
+
+            // Humidity
+            const humValue = parseFloat(data.humidity).toFixed(1);
+            document.getElementById('humidityValue').textContent = humValue + '%';
+            const humBar = document.querySelector('#humidityBar .progress-fill');
+            humBar.style.width = humValue + '%';
+            document.getElementById('humidityStatus').textContent = humValue > 60 ? 'Too Humid' : (humValue < 30 ? 'Too Dry' : 'Optimal');
+            if (humValue > 60 || humValue < 30) {
+                humBar.classList.add('warning');
+            } else {
+                humBar.classList.remove('warning');
+            }
+
+            // MQ135 (NH3/CO2)
+            const mq135Value = parseFloat(data.mq135).toFixed(1);
+            document.getElementById('mq135Value').textContent = mq135Value + ' ppm';
+            const mq135Bar = document.querySelector('#mq135Bar .progress-fill');
+            // Calculate percentage relative to threshold (130 ppm)
+            const mq135Percentage = Math.min((mq135Value / 130) * 100, 100);
+            mq135Bar.style.width = Math.max(mq135Percentage, 0) + '%';
+            
+            // MQ135 status logic
+            const mq135Status = document.getElementById('mq135Status');
+            if (mq135Value > 130) { // elevated level for fridge condition
+                mq135Status.textContent = 'Elevated';
+                mq135Bar.classList.remove('warning');
+                mq135Bar.classList.add('danger');
+            } else {
+                mq135Status.textContent = 'Normal';
+                mq135Bar.classList.remove('warning', 'danger');
+            }
+
+            // MQ2 (Flammable Gases)
+            const mq2Value = parseFloat(data.mq2).toFixed(1);
+            document.getElementById('mq2Value').textContent = mq2Value + ' ppm';
+            const mq2Bar = document.querySelector('#mq2Bar .progress-fill');
+            // Calculate percentage relative to threshold (280 ppm)
+            const mq2Percentage = Math.min((mq2Value / 280) * 100, 100);
+            mq2Bar.style.width = Math.max(mq2Percentage, 0) + '%';
+            
+            // MQ2 status logic
+            const mq2Status = document.getElementById('mq2Status');
+            if (mq2Value > 280) { // elevated level for fridge condition
+                mq2Status.textContent = 'Elevated';
+                mq2Bar.classList.remove('warning');
+                mq2Bar.classList.add('danger');
+            } else {
+                mq2Status.textContent = 'Normal';
+                mq2Bar.classList.remove('warning', 'danger');
+            }
+
+            // Update door and power status if provided
+            if (data.door_status) {
+                const doorStatus = document.getElementById('doorStatus');
+                if (doorStatus) {
+                    doorStatus.textContent = data.door_status.charAt(0).toUpperCase() + data.door_status.slice(1);
+                }
+            }
+            if (data.power_status) {
+                const powerStatus = document.getElementById('powerStatus');
+                if (powerStatus) {
+                    powerStatus.textContent = data.power_status.charAt(0).toUpperCase() + data.power_status.slice(1);
+                }
+            }
+        });
+        
+        socket.on('door_status', (data) => {
+            updateDoorStatus(data.isOpen);
+        });
+        
+        socket.on('power_status', (data) => {
+            updatePowerStatus(data.isOn);
+        });
+        
+        socket.on('alert', (alert) => {
+            // Add new alert to the list
+            const alertsList = document.getElementById('alertsList');
+            const alertItem = document.createElement('div');
+            alertItem.className = 'alert-item';
+            alertItem.innerHTML = `
+                <div class="alert-icon">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <div class="alert-content">
+                    <div class="alert-message">${alert.message}</div>
+                    <div class="alert-time">${alert.timestamp}</div>
+                </div>
+            `;
+            alertsList.insertBefore(alertItem, alertsList.firstChild);
+            
+            // Keep only last 10 alerts
+            while (alertsList.children.length > 10) {
+                alertsList.removeChild(alertsList.lastChild);
+            }
+        });
+    </script>
+</body>
+</html> 

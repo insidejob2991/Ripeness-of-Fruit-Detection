@@ -1,0 +1,1605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe Suggestions</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #2ecc71;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --text-color: #2c3e50;
+            --bg-color: #f0f2f5;
+            --card-bg: #ffffff;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--text-color);
+            line-height: 1.6;
+            background-image: url('https://images.pexels.com/photos/281260/pexels-photo-281260.jpeg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.6);
+            z-index: -1;
+        }
+
+        .navbar {
+            background: rgb(0,127,255);
+            background: linear-gradient(159deg, rgba(0,127,255,1) 0%, rgba(42,82,190,1) 100%);
+            box-shadow: 0 2px 15px rgba(0,0,0,0.2);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+            transform-style: preserve-3d;
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #ffffff !important;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            background: linear-gradient(45deg, #fff, #e0e0e0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+        }
+
+        .navbar-brand:hover {
+            transform: translateY(-2px);
+            background: linear-gradient(45deg, #4fc3f7, #ffffff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.9) !important;
+            font-weight: 500;
+            padding: 0.5rem 1.2rem !important;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            margin: 0 0.3rem;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+            transform-style: preserve-3d;
+        }
+
+        .nav-link:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.2),
+                transparent
+            );
+            transition: 0.5s;
+        }
+
+        .nav-link:hover:before {
+            left: 100%;
+        }
+
+        .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #ffffff !important;
+            transform: translateY(-2px) translateZ(20px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .nav-link.active {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+            color: #ffffff !important;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-link i {
+            margin-right: 5px;
+            transition: transform 0.3s ease;
+        }
+
+        .nav-link:hover i {
+            transform: scale(1.1);
+        }
+
+        .navbar-toggler {
+            border-color: rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .navbar-toggler-icon {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255, 255, 255, 0.9)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+        }
+
+        .main-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .title-section {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem 0;
+        }
+
+        .title-section h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .recipe-filters {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .search-input {
+            flex: 1;
+            min-width: 200px;
+            padding: 0.8rem;
+            border: 2px solid rgba(46, 204, 113, 0.2);
+            border-radius: 10px;
+            font-size: 1rem;
+        }
+
+        .filter-btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 10px;
+            background: var(--bg-color);
+            color: var(--text-color);
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .recipes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .recipe-card {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            transform-style: preserve-3d;
+            perspective: 1000px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .recipe-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.3), transparent);
+            transform: translateX(-100%);
+            transition: 0.5s;
+        }
+
+        .recipe-card:hover {
+            transform: translateY(-10px) rotateX(5deg);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+
+        .recipe-card:hover::before {
+            transform: translateX(100%);
+        }
+
+        .recipe-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            transition: transform 0.3s ease;
+        }
+
+        .recipe-card:hover img {
+            transform: scale(1.05);
+        }
+
+        .recipe-card h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            transform: translateZ(20px);
+        }
+
+        .recipe-card p {
+            color: #666;
+            margin-bottom: 15px;
+            transform: translateZ(10px);
+        }
+
+        .recipe-card .ingredients {
+            background: rgba(255,255,255,0.8);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            transform: translateZ(15px);
+        }
+
+        .recipe-card .ingredients h4 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .recipe-card .ingredients ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .recipe-card .ingredients li {
+            padding: 5px 0;
+            color: #666;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+        }
+
+        .recipe-card .ingredients li:last-child {
+            border-bottom: none;
+        }
+
+        .recipe-card .instructions {
+            background: rgba(255,255,255,0.8);
+            padding: 15px;
+            border-radius: 8px;
+            transform: translateZ(15px);
+        }
+
+        .recipe-card .instructions h4 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .recipe-card .instructions ol {
+            padding-left: 20px;
+        }
+
+        .recipe-card .instructions li {
+            margin-bottom: 8px;
+            color: #666;
+        }
+
+        .recipe-card .recipe-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .btn-recipe {
+            flex: 1;
+            padding: 0.8rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-view {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-save {
+            background: var(--bg-color);
+            color: var(--text-color);
+        }
+
+        .btn-recipe:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .no-recipes {
+            text-align: center;
+            padding: 3rem;
+            background: var(--card-bg);
+            border-radius: 15px;
+            margin-top: 2rem;
+        }
+
+        .no-recipes i {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .title-section h1 {
+                font-size: 2.5rem;
+            }
+            .filter-group {
+                flex-direction: column;
+            }
+            .search-input {
+                width: 100%;
+            }
+        }
+
+        /* 3D Button Effect */
+        .btn-3d {
+            position: relative;
+            display: inline-block;
+            padding: 10px 20px;
+            background: #2ecc71;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            transform-style: preserve-3d;
+            transform: translateZ(0);
+        }
+
+        .btn-3d:hover {
+            transform: translateY(-3px) translateZ(10px);
+            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.3);
+        }
+
+        .btn-3d:active {
+            transform: translateY(1px) translateZ(0);
+        }
+
+        /* 3D Navigation Effect */
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: white;
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+
+        /* 3D Container Effect */
+        .container {
+            perspective: 1000px;
+            transform-style: preserve-3d;
+        }
+
+        .row {
+            transform-style: preserve-3d;
+        }
+
+        .col-md-4 {
+            transform-style: preserve-3d;
+        }
+
+        /* Add 3D effect to recipe images */
+        .recipe-image {
+            transform-style: preserve-3d;
+            transition: transform 0.5s ease;
+        }
+
+        .recipe-image:hover {
+            transform: rotateY(10deg) rotateX(5deg);
+        }
+
+        /* Add 3D effect to recipe titles */
+        .recipe-title {
+            transform: translateZ(30px);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* Add 3D effect to recipe descriptions */
+        .recipe-description {
+            transform: translateZ(20px);
+        }
+
+        /* Add 3D effect to recipe ingredients */
+        .recipe-ingredients {
+            transform: translateZ(15px);
+        }
+
+        /* Add 3D effect to recipe instructions */
+        .recipe-instructions {
+            transform: translateZ(10px);
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="/">Smart Fridge</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/"><i class="fas fa-home"></i> Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/fridge_conditions"><i class="fas fa-thermometer-half"></i> Fridge Conditions</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/recipes"><i class="fas fa-utensils"></i> Recipes</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        <div class="title-section">
+            <h1>Recipe Suggestions</h1>
+            <p>Discover delicious recipes based on your available ingredients</p>
+        </div>
+
+        <div class="recipe-filters">
+            <div class="filter-group">
+                <div class="search-container flex-grow-1">
+                    <input type="text" class="search-input" placeholder="Search recipes..." oninput="filterRecipes()">
+                </div>
+                <button class="filter-btn active" onclick="filterByCategory('all')">All Recipes</button>
+                <button class="filter-btn" onclick="filterByCategory('available')">Using Available Ingredients</button>
+                <button class="filter-btn" onclick="filterByCategory('saved')">Saved Recipes</button>
+            </div>
+        </div>
+
+        <div class="recipes-grid" id="recipesGrid">
+            <!-- Recipe cards will be dynamically added here -->
+        </div>
+    </div>
+
+    <!-- Recipe Modal -->
+    <div class="modal fade" id="recipeModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Recipe Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="recipeModalContent">
+                    <!-- Recipe details will be dynamically added here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const socket = io({
+            transports: ['websocket'],
+            upgrade: false
+        });
+
+        // Sample recipes data structure
+        const recipes = [
+        {
+                id: 1,
+                title: "Classic Spaghetti Bolognese",
+                category: "Main Dishes",
+                time: "45 mins",
+                difficulty: "Medium",
+                servings: 4,
+                image: "https://images.unsplash.com/photo-1598866594230-a7c12756260f?auto=format&fit=crop&w=500",
+                ingredients: ["ground beef", "tomatoes", "onion", "garlic", "pasta", "olive oil", "herbs"],
+                instructions: [
+                    "Brown the ground beef in a large pan",
+                    "Add chopped onions and garlic, sauté until soft",
+                    "Add tomatoes and herbs, simmer for 30 minutes",
+                    "Cook pasta according to package instructions",
+                    "Serve sauce over pasta"
+                ]
+            },
+            {
+                id: 2,
+                title: "Fresh Berry Smoothie Bowl",
+                category: "Breakfast",
+                time: "10 mins",
+                difficulty: "Easy",
+                servings: 1,
+                image: "https://images.unsplash.com/photo-1590301157890-4810ed352733?auto=format&fit=crop&w=500",
+                ingredients: ["strawberries", "blueberries", "banana", "yogurt", "honey", "granola"],
+                instructions: [
+                    "Blend fruits with yogurt until smooth",
+                    "Pour into a bowl",
+                    "Top with fresh berries and granola",
+                    "Drizzle with honey"
+                ]
+            },
+            {
+                id: 3,
+                title: "Grilled Chicken Caesar Salad",
+                category: "Salads",
+                time: "25 mins",
+                difficulty: "Medium",
+                servings: 2,
+                image:"https://tse2.mm.bing.net/th?id=OIP.2JX_PWsK17lTv6CJqIQSxQHaFX&pid=Api&P=0&h=180",
+                ingredients: ["chicken breast", "romaine lettuce", "parmesan cheese", "caesar dressing", "croutons", "lemon"],
+                instructions: [
+                    "Grill chicken breast until cooked through",
+                    "Chop lettuce and place in bowl",
+                    "Slice chicken and arrange on lettuce",
+                    "Add cheese and croutons",
+                    "Dress with caesar dressing and serve"
+                ]
+            },
+            {
+                id: 4,
+                title: "Chocolate Lava Cake",
+                category: "Desserts",
+                time: "20 mins",
+                difficulty: "Medium",
+                servings: 2,
+                image: "https://images.unsplash.com/photo-1624353365286-3f8d62daad51?auto=format&fit=crop&w=500",
+                ingredients: ["dark chocolate", "butter", "eggs", "sugar", "flour", "vanilla extract"],
+                instructions: [
+                    "Melt chocolate and butter together",
+                    "Mix eggs, sugar, and vanilla",
+                    "Combine with chocolate mixture",
+                    "Add flour and mix well",
+                    "Bake in ramekins for 12-14 minutes"
+                ]
+            },
+            {
+                id: 5,
+                title: "Mango Avocado Salsa",
+                category: "Appetizers",
+                time: "15 mins",
+                difficulty: "Easy",
+                servings: 4,
+                image: "https://tse4.mm.bing.net/th?id=OIP.3rKgFIzX0jrIWySQsOZFKAHaJQ&pid=Api&P=0&h=180",
+                ingredients: ["mango", "avocado", "red onion", "lime", "cilantro", "jalapeño"],
+                instructions: [
+                    "Dice mango and avocado",
+                    "Finely chop onion and jalapeño",
+                    "Chop cilantro",
+                    "Combine all ingredients",
+                    "Squeeze lime juice over top"
+                ]
+            },
+            {
+                id: 6,
+                title: "Thai Green Curry",
+                category: "Main Dishes",
+                time: "35 mins",
+                difficulty: "Medium",
+                servings: 4,
+                image: "https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd?auto=format&fit=crop&w=500",
+                ingredients: ["coconut milk", "green curry paste", "chicken", "bamboo shoots", "bell peppers", "rice"],
+                instructions: [
+                    "Cook curry paste in oil until fragrant",
+                    "Add coconut milk and simmer",
+                    "Add chicken and vegetables",
+                    "Cook until chicken is done",
+                    "Serve over rice"
+                ]
+            },
+            {
+                id: 7,
+                title: "Fresh Spring Rolls",
+                category: "Appetizers",
+                time: "30 mins",
+                difficulty: "Medium",
+                servings: 6,
+                image: "https://tse2.mm.bing.net/th?id=OIP.eSGKX8cNAmWfLcLGUpgNcgHaEK&pid=Api&P=0&h=180",
+                ingredients: ["rice paper", "shrimp", "rice noodles", "carrots", "cucumber", "mint", "peanut sauce"],
+                instructions: [
+                    "Cook shrimp and slice in half",
+                    "Prepare rice noodles",
+                    "Julienne vegetables",
+                    "Soak rice paper and fill",
+                    "Roll tightly and serve with sauce"
+                ]
+            },
+            {
+                id: 8,
+                title: "Classic Margherita Pizza",
+                category: "Main Dishes",
+                time: "25 mins",
+                difficulty: "Medium",
+                servings: 4,
+                image: "https://images.unsplash.com/photo-1604068549290-dea0e4a305ca?auto=format&fit=crop&w=500",
+                ingredients: ["pizza dough", "tomatoes", "mozzarella", "basil", "olive oil", "salt"],
+                instructions: [
+                    "Roll out pizza dough",
+                    "Spread tomato sauce",
+                    "Add fresh mozzarella",
+                    "Bake until crispy",
+                    "Top with fresh basil"
+                ]
+            },
+            {
+                id: 9,
+                title: "Iced Matcha Latte",
+                category: "Beverages",
+                time: "5 mins",
+                difficulty: "Easy",
+                servings: 1,
+                image: "https://images.unsplash.com/photo-1536256263959-770b48d82b0a?auto=format&fit=crop&w=500",
+                ingredients: ["matcha powder", "milk", "ice", "honey"],
+                instructions: [
+                    "Whisk matcha with hot water",
+                    "Add honey to taste",
+                    "Fill glass with ice",
+                    "Pour in milk",
+                    "Stir and serve"
+                ]
+            },
+            {
+                id: 10,
+                title: "Homemade Sushi Rolls",
+                category: "Main Dishes",
+                time: "45 mins",
+                difficulty: "Hard",
+                servings: 4,
+                image: "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=500",
+                ingredients: ["sushi rice", "nori sheets", "salmon", "cucumber", "avocado", "wasabi", "soy sauce"],
+                instructions: [
+                    "Cook and season sushi rice",
+                    "Prepare fillings",
+                    "Place nori on bamboo mat",
+                    "Spread rice and add fillings",
+                    "Roll tightly and slice"
+                ]
+            },
+            {
+                id: 11,
+                title: "Chicken Stir Fry",
+                category: "Main Dishes",
+                time: "30 mins",
+                difficulty: "Medium",
+                servings: 4,
+                image: "https://images.unsplash.com/photo-1603133872878-684f208fb84b?auto=format&fit=crop&w=500",
+                ingredients: ["beef strips", "broccoli", "carrots", "soy sauce", "ginger", "garlic", "rice"],
+                instructions: [
+                    "Marinate beef in soy sauce and ginger",
+                    "Stir-fry chicken until browned",
+                    "Add vegetables and cook until tender",
+                    "Serve over steamed rice"
+                ]
+            },
+            {
+                id: 12,
+                title: "Greek Salad",
+                category: "Salads",
+                time: "15 mins",
+                difficulty: "Easy",
+                servings: 4,
+                image: "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?auto=format&fit=crop&w=500",
+                ingredients: ["cucumber", "tomatoes", "red onion", "olives", "feta cheese", "olive oil", "oregano"],
+                instructions: [
+                    "Chop vegetables into chunks",
+                    "Add olives and crumbled feta",
+                    "Drizzle with olive oil",
+                    "Sprinkle oregano and serve"
+                ]
+            },
+            {
+                id: 13,
+                title: "Pancakes",
+                category: "Breakfast",
+                time: "20 mins",
+                difficulty: "Easy",
+                servings: 4,
+                image: "https://images.unsplash.com/photo-1528207776546-365bb710ee93?auto=format&fit=crop&w=500",
+                ingredients: ["flour", "milk", "eggs", "butter", "maple syrup", "baking powder"],
+                instructions: [
+                    "Mix dry ingredients",
+                    "Whisk wet ingredients separately",
+                    "Combine and fold in blueberries",
+                    "Cook on griddle until golden"
+                ]
+            },
+            {
+                id: 14,
+                title: "Chicken Tikka Masala",
+                category: "Main Dishes",
+                time: "50 mins",
+                difficulty: "Medium",
+                servings: 6,
+                image: "https://images.unsplash.com/photo-1565557623262-b51c2513a641?auto=format&fit=crop&w=500",
+                ingredients: ["chicken", "yogurt", "tomato sauce", "cream", "spices", "onion", "rice"],
+                instructions: [
+                    "Marinate chicken in yogurt and spices",
+                    "Grill or bake chicken",
+                    "Prepare curry sauce",
+                    "Combine and simmer",
+                    "Serve with rice"
+                ]
+            },
+            {
+                id: 15,
+                title: "Sandwich",
+                category: "Main Dishes",
+                time: "10 mins",
+                difficulty: "Easy",
+                servings: 1,
+                image: "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?auto=format&fit=crop&w=500",
+                ingredients: ["bread", "mozzarella", "tomatoes", "basil", "balsamic glaze", "olive oil"],
+                instructions: [
+                    "Slice bread and mozzarella",
+                    "Layer with tomatoes and basil",
+                    "Drizzle with olive oil and balsamic",
+                    "Season and serve"
+                ]
+            },
+            {
+                id: 16,
+                title: "Mango Lassi",
+                category: "Beverages",
+                time: "5 mins",
+                difficulty: "Easy",
+                servings: 2,
+                image: "https://tse2.mm.bing.net/th?id=OIP.NAmdO2HgT0G5qsNrhz3Q1AHaLH&pid=Api&P=0&h=180",
+                ingredients: ["mango", "yogurt", "milk", "cardamom", "honey"],
+                instructions: [
+                    "Blend mango with yogurt",
+                    "Add milk and cardamom",
+                    "Sweeten with honey",
+                    "Serve chilled"
+                ]
+            },
+            {
+                id: 17,
+                title: "Vegetable Stir-Fried Noodles",
+                category: "Main Dishes",
+                time: "20 mins",
+                difficulty: "Easy",
+                servings: 2,
+                image: "https://images.unsplash.com/photo-1585032226651-759b368d7246?auto=format&fit=crop&w=500",
+                ingredients: ["noodles", "carrots", "cabbage", "bell peppers", "soy sauce", "sesame oil"],
+                instructions: [
+                    "Cook noodles according to package",
+                    "Stir-fry vegetables",
+                    "Add noodles and sauce",
+                    "Toss until well combined"
+                ]
+            },
+            {
+                id: 18,
+                title: "Chocolate Chip Cookies",
+                category: "Desserts",
+                time: "25 mins",
+                difficulty: "Easy",
+                servings: 24,
+                image: "https://images.unsplash.com/photo-1499636136210-6f4ee915583e?auto=format&fit=crop&w=500",
+                ingredients: ["flour", "butter", "sugar", "eggs", "chocolate chips", "vanilla extract"],
+                instructions: [
+                    "Cream butter and sugar",
+                    "Add eggs and vanilla",
+                    "Mix in dry ingredients",
+                    "Fold in chocolate chips",
+                    "Bake until golden"
+                ]
+            },
+            {
+                id: 19,
+                title: "Guacamole",
+                category: "Appetizers",
+                time: "15 mins",
+                difficulty: "Easy",
+                servings: 4,
+                image: "https://images.unsplash.com/photo-1615870216519-2f9fa575fa5c?auto=format&fit=crop&w=500",
+                ingredients: ["avocados", "lime", "tomato", "onion", "cilantro", "jalapeño"],
+                instructions: [
+                    "Mash avocados",
+                    "Dice vegetables",
+                    "Combine ingredients",
+                    "Season with lime and salt"
+                ]
+            },
+            {
+                id: 20,
+                title: "Mushroom Risotto",
+                category: "Main Dishes",
+                time: "40 mins",
+                difficulty: "Medium",
+                servings: 4,
+                image: "https://images.unsplash.com/photo-1476124369491-e7addf5db371?auto=format&fit=crop&w=500",
+                ingredients: ["arborio rice", "mushrooms", "onion", "white wine", "parmesan", "butter", "stock"],
+                instructions: [
+                    "Sauté mushrooms and onions",
+                    "Add rice and wine",
+                    "Gradually add hot stock",
+                    "Stir until creamy",
+                    "Finish with parmesan"
+                ]
+            },
+            {
+                id: 21,
+                title: "Fruit Parfait",
+                category: "Breakfast",
+                time: "10 mins",
+                difficulty: "Easy",
+                servings: 2,
+                image: "https://images.unsplash.com/photo-1541745038731-f1c2b5a1a49e?auto=format&fit=crop&w=500",
+                ingredients: ["yogurt", "granola", "strawberries", "blueberries", "honey", "mint"],
+                instructions: [
+                    "Layer yogurt in glasses",
+                    "Add fresh berries",
+                    "Sprinkle with granola",
+                    "Drizzle with honey",
+                    "Garnish with mint"
+                ]
+            },
+         
+            {
+                id: 23,
+                title: "Fruit Tart",
+                category: "Desserts",
+                time: "1 hour",
+                difficulty: "Medium",
+                servings: 8,
+                image: "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=500",
+                ingredients: ["pastry dough", "custard", "strawberries", "kiwi", "blueberries", "apricot jam"],
+                instructions: [
+                    "Bake pastry shell",
+                    "Prepare custard filling",
+                    "Fill shell with custard",
+                    "Arrange fruits on top",
+                    "Glaze with warm jam"
+                ]
+            },
+            {
+                id: 24,
+                title: "Mediterranean Quinoa Bowl",
+                category: "Main Dishes",
+                time: "30 mins",
+                difficulty: "Easy",
+                servings: 4,
+                image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=500",
+                ingredients: ["quinoa", "cucumber", "tomatoes", "olives", "feta", "chickpeas", "olive oil"],
+                instructions: [
+                    "Cook quinoa",
+                    "Chop vegetables",
+                    "Combine all ingredients",
+                    "Dress with olive oil",
+                    "Season to taste"
+                ]
+            },
+            {
+                id: 25,
+                title: "Berry Smoothie",
+                category: "Beverages",
+                time: "5 mins",
+                difficulty: "Easy",
+                servings: 2,
+                image: "https://images.unsplash.com/photo-1638176066666-ffb2f013c7dd?auto=format&fit=crop&w=500",
+                ingredients: ["mixed berries", "banana", "yogurt", "honey", "almond milk", "ice"],
+                instructions: [
+                    "Combine all ingredients",
+                    "Blend until smooth",
+                    "Adjust sweetness",
+                    "Serve immediately"
+                ]
+            },
+            {
+                id: 26,
+                title: "Shrikhand",
+                category: "Desserts",
+                time: "4 hours",
+                difficulty: "Easy",
+                servings: 4,
+                image:"https://tse3.mm.bing.net/th?id=OIP.X7R27m0eOFszNWltlitglwHaH5&pid=Api&P=0&h=180",
+                ingredients: ["yogurt", "mango", "cardamom", "saffron", "pistachios", "sugar"],
+                instructions: [
+                    "Strain yogurt through cheesecloth for 4 hours",
+                    "Blend fresh mango into puree",
+                    "Mix strained yogurt with mango puree",
+                    "Add cardamom and saffron",
+                    "Garnish with pistachios",
+                    "Chill before serving"
+                ]
+            },
+            {
+                id: 27,
+                title: "Fruit Rabri",
+                category: "Desserts",
+                time: "45 mins",
+                difficulty: "Medium",
+                servings: 6,
+                image: "https://tse1.mm.bing.net/th?id=OIP.s9J3JovFnbzlVAHhyZAXGQHaEy&pid=Api&P=0&h=180",
+                ingredients: ["milk", "strawberries", "apple", "banana", "cardamom", "almonds", "sugar"],
+                instructions: [
+                    "Reduce milk on low heat until thickened",
+                    "Add cardamom and sugar",
+                    "Chop fruits into small pieces",
+                    "Mix fruits into thickened milk",
+                    "Garnish with sliced almonds",
+                    "Serve chilled"
+                ]
+            },
+            {
+                id: 28,
+                title: "Amrakhand",
+                category: "Desserts",
+                time: "4 hours",
+                difficulty: "Easy",
+                servings: 4,
+                image: "https://tse3.mm.bing.net/th?id=OIP.4i8yPtYsNpVeIYEqDE1EzwHaFn&pid=Api&P=0&h=180",
+                ingredients: ["yogurt", "mango", "sugar", "cardamom", "saffron", "almonds"],
+                instructions: [
+                    "Hang yogurt in cheesecloth to drain",
+                    "Puree fresh mangoes",
+                    "Mix strained yogurt with mango puree",
+                    "Add sugar and cardamom powder",
+                    "Garnish with saffron and almonds",
+                    "Chill before serving"
+                ]
+            },
+            {
+                id: 29,
+                title: "Fruit Phirni",
+                category: "Desserts",
+                time: "1 hour",
+                difficulty: "Medium",
+                servings: 6,
+                image: "https://images.unsplash.com/photo-1615832494873-b0c52d519696?auto=format&fit=crop&w=500",
+                ingredients: ["rice", "milk", "pomegranate", "apple", "banana", "cardamom", "pistachios", "sugar"],
+                instructions: [
+                    "Soak and grind rice to paste",
+                    "Cook rice paste in milk until thickened",
+                    "Add sugar and cardamom",
+                    "Mix in chopped fruits",
+                    "Garnish with pistachios",
+                    "Serve chilled in earthen pots"
+                ]
+            },
+            {
+                id: 30,
+                title: "Thandai",
+                category: "Beverages",
+                time: "30 mins",
+                difficulty: "Medium",
+                servings: 4,
+                image: "https://in.images.search.yahoo.com/images/view;_ylt=AwrPodPNg.Vnp_cnRCO9HAx.;_ylu=c2VjA3NyBHNsawNpbWcEb2lkAzYxZWNjZmRmYTliYjZiZmQ3OTIyODQ2YTAxMTJjNDljBGdwb3MDOQRpdANiaW5n?back=https%3A%2F%2Fin.images.search.yahoo.com%2Fsearch%2Fimages%3Fp%3Dthandai%26type%3DE210IN714G91858%26fr%3Dmcafee%26fr2%3Dpiv-web%26tab%3Dorganic%26ri%3D9&w=1199&h=1199&imgurl=aromaticessence.co%2Fwp-content%2Fuploads%2F2022%2F03%2Fkesar_thandai_6.jpg&rurl=https%3A%2F%2Faromaticessence.co%2Fthandai-recipe%2F&size=264KB&p=thandai&oid=61eccfdfa9bb6bfd7922846a0112c49c&fr2=piv-web&fr=mcafee&tt=Thandai+Recipe+-+Aromatic+Essence&b=0&ni=21&no=9&ts=&tab=organic&sigr=OvsG7H4Lxb6X&sigb=uaClJ4lwDhY0&sigi=IVLghYle2gd0&sigt=G4e5r_vbfHcB&.crumb=O9NeB4R.Rgw&fr=mcafee&fr2=piv-web&type=E210IN714G91858",
+                ingredients: ["milk", "almonds", "fennel seeds", "cardamom", "rose petals", "saffron", "sugar"],
+                instructions: [
+                    "Soak almonds and grind to paste",
+                    "Boil milk with cardamom and saffron",
+                    "Mix almond paste with milk",
+                    "Add sugar and rose petals",
+                    "Strain and chill",
+                    "Serve garnished with rose petals"
+                ]
+            },
+            {
+                id: 31,
+                title: "Rasmalai",
+                category: "Desserts",
+                time: "1 hour",
+                difficulty: "Medium",
+                servings: 6,
+                image: "https://tse3.mm.bing.net/th?id=OIP.9fhCy5FZcUbfl6QPli-mmQHaE8&pid=Api&P=0&h=180",
+                ingredients: ["milk", "sugar", "cardamom", "saffron", "pistachios", "milk powder", "rose water"],
+                instructions: [
+                    "Make small balls from milk powder dough",
+                    "Cook in sugar syrup until soft",
+                    "Prepare thickened milk with cardamom and saffron",
+                    "Soak the balls in flavored milk",
+                    "Garnish with pistachios",
+                    "Chill before serving"
+                ]
+            },
+            {
+                id: 32,
+                title: "Fruit Kesari",
+                category: "Desserts",
+                time: "30 mins",
+                difficulty: "Easy",
+                servings: 4,
+                image: "https://images.unsplash.com/photo-1528975604071-b4dc52a2d18c?auto=format&fit=crop&w=500",
+                ingredients: ["semolina", "mixed fruits", "milk", "sugar", "ghee", "cashews", "raisins"],
+                instructions: [
+                    "Roast semolina in ghee until fragrant",
+                    "Add milk and cook until absorbed",
+                    "Mix in chopped fruits and sugar",
+                    "Add saffron for color",
+                    "Garnish with roasted nuts",
+                    "Serve warm"
+                ]
+            },
+            {
+                id: 33,
+                title: "Paan Smoothie",
+                category: "Beverages",
+                time: "15 mins",
+                difficulty: "Easy",
+                servings: 2,
+                image: "https://images.unsplash.com/photo-1541658016709-82535e94bc69?auto=format&fit=crop&w=500",
+                ingredients: ["betel leaves", "milk", "rose syrup", "fennel seeds", "gulkand", "ice cream"],
+                instructions: [
+                    "Blend betel leaves with milk",
+                    "Add rose syrup and gulkand",
+                    "Mix in crushed fennel seeds",
+                    "Blend with ice cream",
+                    "Serve chilled with garnish"
+                ]
+            },
+            {
+                id: 34,
+                title: "Fruit Kalakand",
+                category: "Desserts",
+                time: "45 mins",
+                difficulty: "Medium",
+                servings: 8,
+                image: "https://tse2.mm.bing.net/th?id=OIP.jjUuBLIM4x7viueSea3XAwHaJ4&pid=Api&P=0&h=180",
+                ingredients: ["milk powder", "condensed milk", "mixed fruits", "cardamom", "pistachios", "saffron"],
+                instructions: [
+                    "Mix milk powder with condensed milk",
+                    "Cook until mixture thickens",
+                    "Add chopped mixed fruits",
+                    "Flavor with cardamom and saffron",
+                    "Set in a tray and garnish",
+                    "Cut into squares when set"
+                ]
+            },
+            {
+                id: 35,
+                title: "Rose Falooda",
+                category: "Beverages",
+                time: "20 mins",
+                difficulty: "Medium",
+                servings: 2,
+                image: "https://in.images.search.yahoo.com/images/view;_ylt=Awrx_09FhOVn118p5gi9HAx.;_ylu=c2VjA3NyBHNsawNpbWcEb2lkAzdlNzkwMTQwMzkzM2ZkYzZmY2Q0ODk4N2UwYWFmOWYzBGdwb3MDMjEEaXQDYmluZw--?back=https%3A%2F%2Fin.images.search.yahoo.com%2Fsearch%2Fimages%3Fp%3DRose%2BFalooda%26type%3DE210IN714G91858%26fr%3Dmcafee%26fr2%3Dpiv-web%26tab%3Dorganic%26ri%3D21&w=780&h=1169&imgurl=www.theflavorbender.com%2Fwp-content%2Fuploads%2F2015%2F05%2FFalooda-3322-780x1169.jpg&rurl=https%3A%2F%2Fwww.theflavorbender.com%2Fsri-lankan-faluda-syrup-from-scratch-and-drink%2F&size=34KB&p=Rose+Falooda&oid=7e7901403933fdc6fcd48987e0aaf9f3&fr2=piv-web&fr=mcafee&tt=Homemade+Falooda+Recipe+%28From+Scratch%29+-+The+Flavor+Bender&b=0&ni=21&no=21&ts=&tab=organic&sigr=Cgs89TdUhlHN&sigb=umP4UvZYz6wl&sigi=6paf3p7bn.mb&sigt=iI5cKdFK4eI8&.crumb=O9NeB4R.Rgw&fr=mcafee&fr2=piv-web&type=E210IN714G91858",
+                ingredients: ["milk", "rose syrup", "falooda sev", "basil seeds", "ice cream", "dry fruits"],
+                instructions: [
+                    "Soak basil seeds until they swell",
+                    "Layer falooda sev in glasses",
+                    "Add soaked basil seeds",
+                    "Pour rose-flavored milk",
+                    "Top with ice cream",
+                    "Garnish with dry fruits"
+                ]
+            },
+            {
+                id: 36,
+                title: "Fruit Sandesh",
+                category: "Desserts",
+                time: "40 mins",
+                difficulty: "Medium",
+                servings: 6,
+                image: "https://in.images.search.yahoo.com/images/view;_ylt=Awrx_09fhOVnvrgow1a9HAx.;_ylu=c2VjA3NyBHNsawNpbWcEb2lkAzNlNTAyMDk0ODg4NWJiNmNlYWIwMjBmODEzOGViOTJjBGdwb3MDNARpdANiaW5n?back=https%3A%2F%2Fin.images.search.yahoo.com%2Fsearch%2Fimages%3Fp%3DFruit%2BSandesh%26type%3DE210IN714G91858%26fr%3Dmcafee%26fr2%3Dpiv-web%26tab%3Dorganic%26ri%3D4&w=620&h=400&imgurl=www.tasty-indian-recipes.com%2Fwp-content%2Fuploads%2F2014%2F02%2FFruit-Sandesh-new.jpg&rurl=http%3A%2F%2Fwww.tasty-indian-recipes.com%2Findian-dessert-recipes%2Fsweets-recipes%2Ffruit-sandesh-recipe%2F&size=30KB&p=Fruit+Sandesh&oid=3e5020948885bb6ceab020f8138eb92c&fr2=piv-web&fr=mcafee&tt=Fruit+Sandesh+Recipe+%2F+Bengali+Fruit+Sondesh+Recipe&b=0&ni=21&no=4&ts=&tab=organic&sigr=9T81qCmxn1m2&sigb=NRmDh1EmWaKp&sigi=WVczzFjmCfB7&sigt=O_QOxFHqj_xb&.crumb=O9NeB4R.Rgw&fr=mcafee&fr2=piv-web&type=E210IN714G91858",
+                ingredients: ["paneer", "mango", "strawberries", "sugar", "cardamom", "pistachios"],
+                instructions: [
+                    "Knead fresh paneer until smooth",
+                    "Mix with sugar and cardamom",
+                    "Blend fruits separately",
+                    "Layer paneer mixture with fruit purees",
+                    "Shape into small rounds",
+                    "Garnish with pistachios"
+                ]
+            },
+            {
+                id: 37,
+                title: "Coconut Rice",
+                category: "Main Dishes",
+                time: "30 mins",
+                difficulty: "Easy",
+                servings: 4,
+                image: "https://images.unsplash.com/photo-1516684732162-798a0062be99?auto=format&fit=crop&w=500",
+                ingredients: ["rice", "coconut", "curry leaves", "mustard seeds", "urad dal", "chana dal", "peanuts", "green chilies"],
+                instructions: [
+                    "Cook rice and let it cool",
+                    "Grate fresh coconut",
+                    "Temper mustard seeds and dals in oil",
+                    "Add curry leaves and green chilies",
+                    "Mix with rice and coconut",
+                    "Garnish with roasted peanuts"
+                ]
+            },
+            {
+                id: 38,
+                title: "Mango Rice",
+                category: "Main Dishes",
+                time: "25 mins",
+                difficulty: "Easy",
+                servings: 4,
+                image: "https://tse3.mm.bing.net/th?id=OIP.gBzLOJ2IGgMmqq78g6UxoAHaHa&pid=Api&P=0&h=180",
+                ingredients: ["rice", "raw mango", "peanuts", "mustard seeds", "curry leaves", "turmeric", "red chilies"],
+                instructions: [
+                    "Cook rice and cool it",
+                    "Grate raw mango",
+                    "Temper mustard seeds and spices",
+                    "Add grated mango and sauté",
+                    "Mix with rice and turmeric",
+                    "Garnish with roasted peanuts"
+                ]
+            },
+            {
+                id: 39,
+                title: "Pineapple Gojju",
+                category: "Main Dishes",
+                time: "35 mins",
+                difficulty: "Medium",
+                servings: 4,
+                image: "https://images.unsplash.com/photo-1587883012610-e3df17d41270?auto=format&fit=crop&w=500",
+                ingredients: ["pineapple", "jaggery", "tamarind", "curry leaves", "mustard seeds", "red chilies", "coconut"],
+                instructions: [
+                    "Cut pineapple into small pieces",
+                    "Make tamarind extract",
+                    "Cook pineapple with jaggery",
+                    "Add ground spice paste",
+                    "Temper with mustard and curry leaves",
+                    "Serve with rice"
+                ]
+            },
+            {
+                id: 40,
+                title: "Banana Dosa",
+                category: "Breakfast",
+                time: "20 mins",
+                difficulty: "Easy",
+                servings: 4,
+                image: "https://images.unsplash.com/photo-1630383249896-424e482df921?auto=format&fit=crop&w=500",
+                ingredients: ["ripe bananas", "rice flour", "sugar", "cardamom", "ghee"],
+                instructions: [
+                    "Mash ripe bananas",
+                    "Mix with rice flour and sugar",
+                    "Add cardamom powder",
+                    "Make thin dosas on hot griddle",
+                    "Cook with ghee until golden",
+                    "Serve hot"
+                ]
+            },
+            {
+                id: 41,
+                title: "Tender Coconut Pudding",
+                category: "Desserts",
+                time: "3 hours",
+                difficulty: "Medium",
+                servings: 6,
+                image: "https://images.unsplash.com/photo-1528975604071-b4dc52a2d18c?auto=format&fit=crop&w=500",
+                ingredients: ["tender coconut", "coconut water", "milk", "sugar", "agar agar", "cardamom"],
+                instructions: [
+                    "Scoop tender coconut meat",
+                    "Dissolve agar agar in coconut water",
+                    "Heat milk with sugar",
+                    "Add coconut meat and cardamom",
+                    "Set in molds",
+                    "Chill until firm"
+                ]
+            },
+            {
+                id: 42,
+                title: "Neer More",
+                category: "Beverages",
+                time: "10 mins",
+                difficulty: "Easy",
+                servings: 4,
+                image: "https://tse3.mm.bing.net/th?id=OIP.nDh2fGMkZMpSueO2_npPVwHaHa&pid=Api&P=0&h=180",
+                ingredients: ["buttermilk", "ginger", "green chilies", "curry leaves", "coriander", "asafoetida"],
+                instructions: [
+                    "Blend buttermilk until smooth",
+                    "Add finely chopped ginger and chilies",
+                    "Season with curry leaves and asafoetida",
+                    "Add chopped coriander",
+                    "Chill and serve"
+                ]
+            },
+            {
+                id: 43,
+                title: "Fruit salad",
+                category: "Desserts",
+                time: "30 mins",
+                difficulty: "Easy",
+                servings: 4,
+                image: "data:image/jpeg;base64,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",
+                ingredients: ["mango", "apple", "banana", "strawberry","grapes"],
+                instructions: [
+                    "Cut all fruits into small pieces",
+                    "Mix all fruits together",
+                    "Serve chilled"
+                ]   
+            }
+            // ... More recipes will be added here
+        ];
+
+        // Update recipe images with reliable URLs
+        recipes.forEach(recipe => {
+            switch(recipe.title) {
+                case "Fresh Spring Rolls":
+                    recipe.image = "https://images.unsplash.com/photo-1553163675-71dd0162af17?auto=format&fit=crop&w=500";
+                    break;
+                case "Mango Lassi":
+                    recipe.image = "https://images.unsplash.com/photo-1626762938459-b50f7bd7a172?auto=format&fit=crop&w=500";
+                    break;
+                case "Thai Green Curry":
+                    recipe.image = "https://images.unsplash.com/photo-1548943487-a2e4e43b4853?auto=format&fit=crop&w=500";
+                    break;
+                case "Fruit Parfait":
+                    recipe.image = "https://images.unsplash.com/photo-1541745038731-f1c2b5a1a49e?auto=format&fit=crop&w=500";
+                    break;
+                case "Vegetable Soup":
+                    recipe.image = "https://images.unsplash.com/photo-1605377347958-e8bd4c00ba1d?auto=format&fit=crop&w=500";
+                    break;
+                case "Fruit Tart":
+                    recipe.image = "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=500";
+                    break;
+                case "Mediterranean Quinoa Bowl":
+                    recipe.image = "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=500";
+                    break;
+                case "Berry Smoothie":
+                    recipe.image = "https://images.unsplash.com/photo-1638176066666-ffb2f013c7dd?auto=format&fit=crop&w=500";
+                    break;
+                case "Beef Stir Fry":
+                    recipe.image = "https://images.unsplash.com/photo-1603133872878-684f208fb84b?auto=format&fit=crop&w=500";
+                    break;
+                case "Vegetable Stir-Fried Noodles":
+                    recipe.image = "https://images.unsplash.com/photo-1585032226651-759b368d7246?auto=format&fit=crop&w=500";
+                    break;
+            }
+        });
+
+        // Add this code right after the recipes array definition
+        document.addEventListener('DOMContentLoaded', function() {
+            // Verify images and replace broken ones with fallback
+            recipes.forEach(recipe => {
+                const img = new Image();
+                img.onerror = function() {
+                    recipe.image = "https://images.unsplash.com/photo-1495195134817-aeb325a55b65?auto=format&fit=crop&w=500"; // Generic food image as fallback
+                };
+                img.src = recipe.image;
+            });
+        });
+
+        // Add recipe categories for filtering
+        const categories = ["All", "Main Dishes", "Breakfast", "Salads", "Desserts", "Appetizers", "Beverages"];
+
+        // Update the filter buttons
+        function updateFilterButtons() {
+            const filterGroup = document.querySelector('.filter-group');
+            // Clear existing category buttons
+            const existingButtons = filterGroup.querySelectorAll('.filter-btn:not(:first-child):not(:nth-child(2)):not(:nth-child(3))');
+            existingButtons.forEach(button => button.remove());
+            
+            // Add category buttons
+            categories.forEach(category => {
+                if (category !== 'All') {  // Skip 'All' as it's already in HTML
+                    const button = document.createElement('button');
+                    button.className = 'filter-btn';
+                    button.textContent = category;
+                    button.onclick = () => filterByCategory(category);
+                    filterGroup.appendChild(button);
+                }
+            });
+        }
+
+        let inventoryItems = [];
+        let savedRecipes = new Set();
+
+        // Load inventory from localStorage
+        function loadInventoryFromStorage() {
+            const savedInventory = localStorage.getItem('inventoryItems');
+            if (savedInventory) {
+                inventoryItems = JSON.parse(savedInventory);
+                updateRecipeDisplay();
+            }
+        }
+
+        function getAvailableIngredients() {
+            return inventoryItems.map(item => item.fruit.toLowerCase());
+        }
+
+        function canMakeRecipe(recipe) {
+            const available = getAvailableIngredients();
+            const totalIngredients = recipe.ingredients.length;
+            let availableIngredients = 0;
+
+            recipe.ingredients.forEach(ingredient => {
+                const ingredientLower = ingredient.toLowerCase();
+                const ingredientSingular = ingredientLower.endsWith('s') ? ingredientLower.slice(0, -1) : ingredientLower;
+                const ingredientPlural = !ingredientLower.endsWith('s') ? ingredientLower + 's' : ingredientLower;
+                
+                if (available.some(item => 
+                    item === ingredientLower || 
+                    item === ingredientSingular || 
+                    item === ingredientPlural
+                )) {
+                    availableIngredients++;
+                }
+            });
+
+            // Return true if more than half of the ingredients are available
+            return availableIngredients > totalIngredients / 2;
+        }
+
+        function filterRecipes() {
+            const searchTerm = document.querySelector('.search-input').value.toLowerCase();
+            const activeCategory = Array.from(document.querySelectorAll('.filter-btn')).find(btn => btn.classList.contains('active'))?.textContent || 'All';
+            filterByCategory(activeCategory);
+        }
+
+        function filterByCategory(category) {
+            // Update active button state
+            const buttons = document.querySelectorAll('.filter-btn');
+            buttons.forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.textContent === category || 
+                    (category.toLowerCase() === 'all' && btn.textContent === 'All Recipes') ||
+                    (category === 'available' && btn.textContent === 'Using Available Ingredients') ||
+                    (category === 'saved' && btn.textContent === 'Saved Recipes')) {
+                    btn.classList.add('active');
+                }
+            });
+
+            // Filter recipes
+            const searchTerm = document.querySelector('.search-input').value.toLowerCase();
+            let filteredRecipes = [...recipes];
+
+            // Apply category filter
+            if (category.toLowerCase() !== 'all') {
+                if (category === 'available') {
+                    filteredRecipes = filteredRecipes.filter(recipe => canMakeRecipe(recipe));
+                } else if (category === 'saved') {
+                    filteredRecipes = filteredRecipes.filter(recipe => savedRecipes.has(recipe.id));
+                } else {
+                    filteredRecipes = filteredRecipes.filter(recipe => recipe.category === category);
+                }
+            }
+
+            // Apply search filter if exists
+            if (searchTerm) {
+                filteredRecipes = filteredRecipes.filter(recipe =>
+                    recipe.title.toLowerCase().includes(searchTerm) ||
+                    recipe.ingredients.some(ing => ing.toLowerCase().includes(searchTerm))
+                );
+            }
+
+            // Update display
+            displayFilteredRecipes(filteredRecipes);
+        }
+
+        function displayFilteredRecipes(filteredRecipes) {
+            const recipesGrid = document.getElementById('recipesGrid');
+            
+            if (!filteredRecipes || filteredRecipes.length === 0) {
+                recipesGrid.innerHTML = `
+                    <div class="no-recipes">
+                        <i class="fas fa-search"></i>
+                        <h3>No recipes found</h3>
+                        <p>Try adjusting your search or filters</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let recipesHtml = '';
+            filteredRecipes.forEach(recipe => {
+                const canMake = canMakeRecipe(recipe);
+                const isSaved = savedRecipes.has(recipe.id);
+
+                recipesHtml += `
+                    <div class="recipe-card">
+                        <img src="${recipe.image}" alt="${recipe.title}" class="recipe-image" onerror="this.src='https://images.unsplash.com/photo-1495195134817-aeb325a55b65?auto=format&fit=crop&w=500'">
+                        <div class="recipe-content">
+                            <h3 class="recipe-title">${recipe.title}</h3>
+                            <div class="recipe-info">
+                                <span><i class="fas fa-clock"></i> ${recipe.time}</span>
+                                <span><i class="fas fa-utensils"></i> ${recipe.difficulty}</span>
+                                <span><i class="fas fa-users"></i> ${recipe.servings} servings</span>
+                            </div>
+                            <div class="ingredients-list">
+                                <h4>Main Ingredients:</h4>
+                                ${recipe.ingredients.map(ing => {
+                                    const isAvailable = getAvailableIngredients().includes(ing.toLowerCase());
+                                    return `
+                                        <div class="ingredient-item">
+                                            <i class="fas ${isAvailable ? 'fa-check-circle text-success' : 'fa-times-circle text-danger'}"></i>
+                                            <span>${ing}</span>
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                            <div class="recipe-actions">
+                                <button class="btn-recipe btn-view" onclick="viewRecipe(${recipe.id})">
+                                    <i class="fas fa-eye"></i> View Recipe
+                                </button>
+                                <button class="btn-recipe btn-save" onclick="toggleSaveRecipe(${recipe.id})">
+                                    <i class="fas ${isSaved ? 'fa-bookmark' : 'fa-bookmark-o'}"></i>
+                                    ${isSaved ? 'Saved' : 'Save'}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            recipesGrid.innerHTML = recipesHtml;
+        }
+
+        function viewRecipe(recipeId) {
+            const recipe = recipes.find(r => r.id === recipeId);
+            if (!recipe) return;
+
+            const modalContent = document.getElementById('recipeModalContent');
+            modalContent.innerHTML = `
+                <div class="recipe-detail">
+                    <img src="${recipe.image}" alt="${recipe.title}" style="width: 100%; height: 300px; object-fit: cover; border-radius: 10px;">
+                    <h3 class="mt-4">${recipe.title}</h3>
+                    <div class="recipe-info mb-4">
+                        <span><i class="fas fa-clock"></i> ${recipe.time}</span>
+                        <span><i class="fas fa-utensils"></i> ${recipe.difficulty}</span>
+                        <span><i class="fas fa-users"></i> ${recipe.servings} servings</span>
+                    </div>
+                    <h4>Ingredients:</h4>
+                    <ul class="list-unstyled">
+                        ${recipe.ingredients.map(ing => {
+                            const ingLower = ing.toLowerCase();
+                            const ingSingular = ingLower.endsWith('s') ? ingLower.slice(0, -1) : ingLower;
+                            const ingPlural = !ingLower.endsWith('s') ? ingLower + 's' : ingLower;
+                            const isAvailable = getAvailableIngredients().some(item => 
+                                item === ingLower || 
+                                item === ingSingular || 
+                                item === ingPlural
+                            );
+                            return `
+                                <li class="mb-2">
+                                    <i class="fas ${isAvailable ? 'fa-check-circle text-success' : 'fa-times-circle text-danger'}"></i>
+                                    ${ing}
+                                </li>
+                            `;
+                        }).join('')}
+                    </ul>
+                    <h4>Instructions:</h4>
+                    <ol>
+                        ${recipe.instructions.map(step => `<li class="mb-2">${step}</li>`).join('')}
+                    </ol>
+                </div>
+            `;
+
+            const modal = new bootstrap.Modal(document.getElementById('recipeModal'));
+            modal.show();
+        }
+
+        function toggleSaveRecipe(recipeId) {
+            if (savedRecipes.has(recipeId)) {
+                savedRecipes.delete(recipeId);
+            } else {
+                savedRecipes.add(recipeId);
+            }
+            updateRecipeDisplay();
+            // Save to localStorage
+            localStorage.setItem('savedRecipes', JSON.stringify([...savedRecipes]));
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            updateFilterButtons();
+            loadInventoryFromStorage();
+            
+            // Load saved recipes from localStorage
+            const savedRecipesData = localStorage.getItem('savedRecipes');
+            if (savedRecipesData) {
+                savedRecipes = new Set(JSON.parse(savedRecipesData));
+            }
+
+            // Display all recipes initially
+            filterByCategory('all');
+
+            // Set up search input event listener
+            const searchInput = document.querySelector('.search-input');
+            if (searchInput) {
+                searchInput.addEventListener('input', filterRecipes);
+            }
+
+            // Make sure "All Recipes" button is active
+            const allButton = document.querySelector('.filter-btn');
+            if (allButton) {
+                allButton.classList.add('active');
+            }
+        });
+
+        // Listen for inventory updates
+        socket.on('inventory_updated', function(data) {
+            if (data && data.inventory) {
+                inventoryItems = data.inventory;
+                updateRecipeDisplay();
+            }
+        });
+
+        function checkAvailableIngredients(recipe) {
+            const availableIngredients = new Set();
+            const inventory = JSON.parse(localStorage.getItem('inventoryItems') || '[]');
+            
+            // Helper function to get singular form of a word
+            function getSingular(word) {
+                if (word.endsWith('s')) {
+                    return word.slice(0, -1);
+                }
+                return word;
+            }
+
+            // Helper function to get plural form of a word
+            function getPlural(word) {
+                if (!word.endsWith('s')) {
+                    return word + 's';
+                }
+                return word;
+            }
+
+            // Check each ingredient against inventory
+            recipe.ingredients.forEach(ingredient => {
+                const ingredientLower = ingredient.toLowerCase();
+                const ingredientSingular = getSingular(ingredientLower);
+                const ingredientPlural = getPlural(ingredientLower);
+
+                // Check if any inventory item matches the ingredient (singular or plural)
+                const hasIngredient = inventory.some(item => {
+                    const itemName = item.fruit.toLowerCase();
+                    return itemName === ingredientLower || 
+                           itemName === ingredientSingular || 
+                           itemName === ingredientPlural;
+                });
+
+                if (hasIngredient) {
+                    availableIngredients.add(ingredient);
+                }
+            });
+
+            return availableIngredients;
+        }
+
+        // Add console logging for debugging
+        console.log('Total recipes:', recipes.length);
+        console.log('Categories:', categories);
+    </script>
+</body>
+</html> 

@@ -1,0 +1,9 @@
+[
+    {
+        "type": "Fruit",
+        "name": "ascsc",
+        "expiry_date": "2025-03-25",
+        "ideal_temp": 4,
+        "added_date": "2025-03-25"
+    }
+]
