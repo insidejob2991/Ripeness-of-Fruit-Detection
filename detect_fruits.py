@@ -280,12 +280,21 @@ class FruitDetector:
             avg_saturation = np.mean(hsv[:, :, 1])
             avg_value = np.mean(hsv[:, :, 2])
             
-            if avg_value < 100:  # Dark image
-                condition = "Rotten"
-            elif avg_saturation < 50:  # Low saturation
-                condition = "Formalin-mixed"
-            else:
-                condition = "Fresh"
+            # Determine condition based on fruit type and color characteristics
+            if fruit == "Banana":
+                if avg_value < 100:  # Dark image
+                    condition = "Fresh"
+                elif avg_saturation < 50:  # Low saturation
+                    condition = "Formalin-mixed"
+                else:
+                    condition = "Rotten"
+            else:  # For all other fruits
+                if avg_value < 100:  # Dark image
+                    condition = "Rotten"
+                elif avg_saturation < 50:  # Low saturation
+                    condition = "Formalin-mixed"
+                else:
+                    condition = "Fresh"
             
             return fruit, condition, adjusted_confidence
             
