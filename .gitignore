@@ -22,6 +22,7 @@ live_training_data/
 fruit_album/
 dataset/
 tempCodeRunnerFile.py
+yolo_files/yolov3.weights
 
 # Logs and databases
 *.log
